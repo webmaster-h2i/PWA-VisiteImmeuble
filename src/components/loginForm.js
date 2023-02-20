@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import {signIn} from "../services/apiCalls";
 
 export default function Login() {
 
@@ -9,6 +10,8 @@ export default function Login() {
   function handleSubmit(event) {
 
     event.preventDefault();
+
+    console.log(signIn());
 
     console.log(codeCabinet);
     console.log(codeUtilisateur);
