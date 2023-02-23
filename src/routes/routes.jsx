@@ -2,7 +2,7 @@ import { createBrowserRouter } from 'react-router-dom';
 import BasicErrorPage from '../components/basicErrorPage';
 import Home from '../views/home';
 import Visite from '../views/visite';
-
+import { ProtectedRoute } from "./protectedRoute";
 
 const router = createBrowserRouter([
     {
@@ -12,7 +12,7 @@ const router = createBrowserRouter([
     },
     {
       path: "/immeubles",
-      element: <Visite />,
+      element: <ProtectedRoute><Visite /></ProtectedRoute>,
       errorElement: <BasicErrorPage />,
     },
 ]);

@@ -17,7 +17,7 @@ export default function Login() {
   function handleSubmit(event){
     event.preventDefault();
     // Base url de l'api
-    const apiURL = "https://api-navilite-dev.h2i.fr/api/";
+    const apiURL = process.env.REACT_APP_API_URL;
     // Authentification
     axios.post(apiURL+'login',{},{
       auth:{
