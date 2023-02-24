@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from "react-redux";
-import axios from 'axios';
 import { errorMsg, addError } from '../store/errorSlice';
-import { setToken } from '../store/tokenSlice.jsx';
+import { setToken } from "../store/tokenSlice.jsx";
+import { signIn } from "../services/api/userApi";
 
 export default function Login() {
 
@@ -13,26 +13,16 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const errors = useSelector(errorMsg);
 
-
   function handleSubmit(event){
     event.preventDefault();
-    // Base url de l'api
-    const apiURL = "https://api-navilite-dev.h2i.fr/api/";
-    // Authentification
-    axios.post(apiURL+'login',{},{
-      auth:{
-          username: email,
-          password: password
-      }
-    }).then((response) => {
-
+    signIn(email,password).then((response) => {
+        // Ajout du token dans un state global ( utilisation de Redux )
         dispatch(setToken(response.data.token));
-        navigate('/immeubles');
-
+        // Redirection vers la route immeubles ( utilisation du Router react ) 
+        navigate('/accueil');
     }).catch(e => {
-
+        // Ajout de l'erreur dans un state global ( utilisation de Redux )
         dispatch(addError(e.response.data.message));
-
     });
   }
 
@@ -43,7 +33,9 @@ export default function Login() {
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white flex justify-center">
                   Connexion
               </h1>
-              <h2 className="text-white">{errors}</h2>
+              <div className={errors? "flex text-center bg-red-500 rounded-lg": "hidden"}>
+                <h2 className="text-white p-5">{errors}</h2>
+              </div>
               <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
                   <div>
                         <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
