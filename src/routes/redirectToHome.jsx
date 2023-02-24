@@ -3,13 +3,13 @@ import { useSelector } from "react-redux";
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 
-// Si l'utilisateur n'est pas connecté alors il est redirigé vers la page login
-export const ProtectedRoute = ({ children }) => {
+// Si l'utilisateur est connecté alors il est redirigé vers la page accueil
+export const RedirectHome = ({ children }) => {
     const authToken = useSelector(token);
     const navigate = useNavigate();
     useEffect(() => {
-        if(!authToken){
-            navigate('/');
+        if(authToken){
+            navigate('/accueil');
         }
     })
     return children;
