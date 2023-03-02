@@ -1,5 +1,13 @@
 == Changelog ==
 
+0.10 - 02/03/2023
+
+added
+
+- Création de la navbar
+- Affichage des immeubles sur la page accueil
+- Affichage des visites en cours sur la page accueil
+
 0.7 - 24/02/2023
 
 added
