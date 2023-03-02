@@ -3,6 +3,7 @@ import BasicErrorPage from '../components/basicErrorPage';
 import Home from '../views/home';
 import Login from '../views/login';
 import Visite from '../views/visite';
+import LogOut from '../components/logOut';
 import { ProtectedRoute } from "./protectedRoute";
 import { RedirectHome } from "./redirectToHome";
 
@@ -13,13 +14,18 @@ const router = createBrowserRouter([
       errorElement: <BasicErrorPage />,
     },
     {
+      path: "/logout",
+      element: <LogOut/>,
+      errorElement: <BasicErrorPage />,
+    },
+    {
       path: "/accueil",
-      element: <ProtectedRoute><Home /></ProtectedRoute>,
+      element: <Home />,
       errorElement: <BasicErrorPage />,
     },
     {
       path: "/immeubles",
-      element: <ProtectedRoute><Visite /></ProtectedRoute>,
+      element: <Visite />,
       errorElement: <BasicErrorPage />,
     },
 ]);

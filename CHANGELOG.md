@@ -1,6 +1,22 @@
 == Changelog ==
 
-0.4
+0.10 - 02/03/2023
+
+added
+
+- Création de la navbar
+- Affichage des immeubles sur la page accueil
+- Affichage des visites en cours sur la page accueil
+
+0.7 - 24/02/2023
+
+added
+
+- Ajout de persist react pour stocker les states
+- Extraction des appels api dans un service
+- Création de la page accueil
+
+0.4 - 22/02/2023
 
 added
 
