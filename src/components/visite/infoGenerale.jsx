@@ -7,6 +7,7 @@ import CreatableSelect from 'react-select/creatable';
 import { getPersonnes } from '../../services/api/visiteApi';
 import { createVisite } from '../../services/api/visiteApi';
 import { useSelector } from 'react-redux';
+import moment from "moment";
 registerLocale('fr', fr)
 
 export default function InfoGenerale(){
@@ -35,7 +36,7 @@ export default function InfoGenerale(){
         //Création de l'objet visite qui va être envoyé à l'API
         let visite = {
             "code_immeuble": immeuble,
-            "date_creation": startDate,
+            "date_creation": moment(startDate).format("YYYY-MM-DD HH:mm:ss"),
             "type": contractuelle === 'Oui' ? "Contractuelle" : "Ponctuelle",
             "objet": objetVisite,
             "participants": participantsVisite,
@@ -97,7 +98,7 @@ const DatePickerVisite = ({startDate, setStartDate}) => {
     return (
         <div className="mt-9 mr-3 ml-3 mb-3">
             <label htmlFor="datepickervisite" className="block mb-2 text-sm font-medium text-white">Début de la visite *</label>
-            <DatePicker name="datepickervisite" className="rounded-lg border text-white sm:text-sm focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400" dateFormat="dd/MM/yyyy" locale="fr" selected={startDate} onChange={(date) => setStartDate(date)} />
+            <DatePicker name="datepickervisite" className="rounded-lg border text-white sm:text-sm focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400" dateFormat="dd/MM/yyyy HH:mm:ss" locale="fr" selected={startDate} onChange={(date) => setStartDate(date)} />
         </div>
     );
 };

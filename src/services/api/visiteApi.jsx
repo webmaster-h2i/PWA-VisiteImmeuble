@@ -18,15 +18,17 @@ export async function getVisites(){
 
 // Api call pour créer une visite
 export async function createVisite(visite){
+    console.log(JSON.stringify(visite));
     // récupère le token du store
     const authToken = getCurrentStateFromStore().token.value;
     return api.request({
         url: "/visite",
         method: "POST",
         headers: {
-            'Authorization': `Bearer ${authToken}` 
+            'Authorization': `Bearer ${authToken}`,
+            'Content-Type': 'application/json'
         },
-        data: visite
+        body: JSON.stringify(visite)
     })
 }
 
