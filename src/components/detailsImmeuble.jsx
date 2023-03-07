@@ -20,13 +20,13 @@ export const DetailsImmeuble = forwardRef(({details}, ref) => {
         <div className={show ? '':'hidden'}>
             <div className='m-4 text-white'>
                 <div className='grid grid-cols-2 gap-4'>
-                    <div className='underline text-sm'>Digicode</div>
+                    <div className='text-xs'>Digicode</div>
                     <div className='text-xs'>{details.details.digicode}</div>
-                    <div className='underline text-sm'>Adresse</div>
+                    <div className='text-xs'>Adresse</div>
                     <div className='text-xs'>{details.adresse}</div>
-                    <div className='underline text-sm'>Ville</div>
+                    <div className='text-xs'>Ville</div>
                     <div className='text-xs'>{details.ville}</div>
-                    <div className='underline text-sm'>Code postal</div>
+                    <div className='text-xs'>Code postal</div>
                     <div className='text-xs'>{details.code_postal}</div>
                 </div> 
             </div>

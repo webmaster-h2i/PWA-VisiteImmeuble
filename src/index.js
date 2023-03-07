@@ -9,18 +9,18 @@ import { Provider } from "react-redux";
 import store from './store/store';
 import { persistStore } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';
+import Navbar from './components/navBar';
 
 const persistor = persistStore(store);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-      <RouterProvider router={router} basename="/" />
+        <Navbar/>
+        <RouterProvider router={router} basename="/" />
       </PersistGate>
     </Provider>
-  </React.StrictMode>
 );
 
 // If you want your app to work offline and load faster, you can change

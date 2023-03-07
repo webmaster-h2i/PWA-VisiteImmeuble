@@ -9,7 +9,7 @@ const visiteReducer = createSlice({
     initialState,
     reducers: {
         setImmeuble: (state, action) => {
-            state.value = action.payload
+            state.value = {'immeuble':action.payload}
         }
     }
 })
