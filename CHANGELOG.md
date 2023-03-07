@@ -1,5 +1,14 @@
 == Changelog ==
 
+0.14 - 07/03/2023
+
+added
+
+- Création de la page info générales
+- Création du formulaire
+- Requêtes API
+- Ajout d'un interceptor pour renvoyer vers la page login en cas d'erreur 401
+
 0.10 - 02/03/2023
 
 added
