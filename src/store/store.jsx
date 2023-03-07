@@ -1,4 +1,3 @@
-import errorReducer from "./errorSlice";
 import tokenReducer from "./tokenSlice";
 import visiteReducer from "./visiteSlice";
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
@@ -14,7 +13,6 @@ import {
 import storage from 'redux-persist/lib/storage';
 
 const reducers = combineReducers({
-    errorstate: errorReducer,
     token: tokenReducer,
     visite: visiteReducer,
 });
@@ -22,7 +20,7 @@ const reducers = combineReducers({
 const persistConfig = {
     key: 'root',
     storage,
-    blacklist: ['errorstate']
+    blacklist: ['']
 };
 
 const persistedReducer = persistReducer(persistConfig, reducers);
