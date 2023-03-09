@@ -1,5 +1,13 @@
 == Changelog ==
 
+0.17 - 09/03/2023
+
+added
+
+- Création de la page éléments
+- Création du formulaire
+- Requêtes API
+
 0.14 - 07/03/2023
 
 added

@@ -1,15 +1,19 @@
 import React from 'react';
 import { useEffect, useState, useRef} from 'react';
 import { getImmeubles } from '../services/api/immeubleApi';
-import { getVisites } from '../services/api/visiteApi';
+import { getVisites, deleteVisite } from '../services/api/visiteApi';
 import { ReactComponent as Building } from '../assets/icons/building.svg';
 import { ReactComponent as ArrowDown } from '../assets/icons/arrowDown.svg';
 import { ReactComponent as Pen } from '../assets/icons/pen.svg';
 import { ReactComponent as Trash } from '../assets/icons/trash.svg';
 import { ReactComponent as Plus} from '../assets/icons/plus.svg';
 import { DetailsImmeuble } from './detailsImmeuble';
+import  ErrorMessage  from './errorMessage';
 
 export default function Home() {
+
+  const [error, setError] = useState('');
+
   return (
     <div>
       <div className='p-3'>
@@ -23,11 +27,12 @@ export default function Home() {
               </button>
             </a>
           </div>
+          <ErrorMessage errors={error}/>
           <div className='bg-sky-700 rounded-lg p-3'>
             <div className='mb-5 text-white'>
               <h4>Visites en cours</h4>
             </div>
-              <VisitesEnCours/>
+              <VisitesEnCours setError={setError}/>
           </div>
       </div>
       <div className='p-3'>
@@ -43,7 +48,7 @@ export default function Home() {
 }
 
 //Renvoi la liste des visites en cours
-function VisitesEnCours(){
+function VisitesEnCours({setError}){
 
   const [listVisite, setListVisite] = useState([]);
 
@@ -53,6 +58,21 @@ function VisitesEnCours(){
         setListVisite(response.data.data);
     })
   }, []);
+
+  //Call Api pour supprimer une visite
+  function handleDeleteVisite(event, idVisite){
+    event.preventDefault();
+    deleteVisite(idVisite).then( (response) => {
+      if(response.status !== 200){
+        setError(response.data.message);
+      }else{
+        getVisites().then((response) => {
+          setListVisite(response.data.data);
+        })
+      }
+    }
+    )
+  }
 
   if(listVisite.length > 0){
     return(
@@ -73,7 +93,7 @@ function VisitesEnCours(){
                   </button>
                   </div>
                   <div className='p-1'>
-                  <button className='bg-sky-600 text-white py-1 px-1 rounded-full shadow-2xl'>
+                  <button className='bg-sky-600 text-white py-1 px-1 rounded-full shadow-2xl' onClick={(e) => handleDeleteVisite(e,visite.id)}>
                     <Trash className='w-5'/>
                   </button>
                   </div>

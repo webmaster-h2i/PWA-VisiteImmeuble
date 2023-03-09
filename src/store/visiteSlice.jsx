@@ -1,7 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
-    visite: [''],
+    visite: {
+        immeuble:'',
+        idVisite:'',
+        elements: [],
+        photos: []
+    },
 }
 
 const visiteReducer = createSlice({
@@ -9,11 +14,20 @@ const visiteReducer = createSlice({
     initialState,
     reducers: {
         setImmeuble: (state, action) => {
-            state.value = {'immeuble':action.payload}
+            state.visite.immeuble = action.payload
+        },
+        setIdVisite: (state, action) => {
+            state.visite.idVisite = action.payload
+        },
+        setElements: (state, action) => {
+            state.visite.elements = action.payload
+        },
+        setPhotos: (state, action) => {
+            state.visite.photos = action.payload
         }
     }
 })
 
-export const { setImmeuble } = visiteReducer.actions
+export const { setImmeuble, setIdVisite, setElements, setPhotos } = visiteReducer.actions
 export const immeubleVisite = (state) => state.visite.value
 export default visiteReducer.reducer
