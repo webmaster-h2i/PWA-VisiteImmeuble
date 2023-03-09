@@ -4,9 +4,10 @@ import "react-datepicker/dist/react-datepicker.css";
 import { registerLocale } from  "react-datepicker";
 import { fr } from 'date-fns/locale';
 import CreatableSelect from 'react-select/creatable';
-import { getPersonnes } from '../../services/api/visiteApi';
-import { createVisite } from '../../services/api/visiteApi';
-import { useSelector } from 'react-redux';
+import { getPersonnes, addVisite } from '../../services/api/visiteApi';
+import { useSelector, useDispatch } from 'react-redux';
+import { setIdVisite } from "../../store/visiteSlice.jsx";
+import { useNavigate } from 'react-router-dom';
 import moment from "moment";
 registerLocale('fr', fr)
 
@@ -17,7 +18,9 @@ export default function InfoGenerale(){
     const [startDate, setStartDate] = useState(new Date());
     const [contractuelle, setContractuelle] = useState('Non');
     const [objetVisite, setObjetVisite] = useState(false);
-    const immeuble = useSelector((visite) => visite.visite.value.immeuble);
+    const immeuble = useSelector((visite) => visite.visite.visite.immeuble);
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     useEffect(() => {
         getPersonnes().then((response) => {
@@ -34,19 +37,19 @@ export default function InfoGenerale(){
         selectedOption.map(participant => participantsVisite.push(participant.value))
 
         //Création de l'objet visite qui va être envoyé à l'API
-        let visite = {
+        let visite = [{
             "code_immeuble": immeuble,
             "date_creation": moment(startDate).format("YYYY-MM-DD HH:mm:ss"),
             "type": contractuelle === 'Oui' ? "Contractuelle" : "Ponctuelle",
             "objet": objetVisite,
             "participants": participantsVisite,
-        }
+        }]
 
         //Call API
-        createVisite(visite).then((response) => {
-            console.log(response);
+        addVisite(visite).then((response) => {
+            dispatch(setIdVisite(response.data.data.id));
+            navigate("/element");
         })
-
     }
 
     return(
@@ -105,7 +108,6 @@ const DatePickerVisite = ({startDate, setStartDate}) => {
   
 const PersonnesVisite = ({setSelectedOption, participants, selectedOption}) => {
     return(
-
         <div className="m-3">
             <label htmlFor="selectpersonnes" className="block mb-2 text-sm font-medium text-white">Participants *</label>
             <CreatableSelect

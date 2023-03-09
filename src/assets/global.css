@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@600&family=Figtree&family=Montserrat:wght@200&display=swap');
 
 
 html{
@@ -9,4 +10,10 @@ html{
 
 input:-webkit-autofill { 
     -webkit-background-clip: text;
+}
+
+body
+{
+    font-family: 'Comfortaa', cursive;
+    font-family: 'Figtree', sans-serif;
 }
