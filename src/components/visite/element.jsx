@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { getSecteurs, getComposants, addElement, addPhoto } from '../../services/api/visiteApi';
 import { setElements, setPhotos } from '../../store/visiteSlice.jsx';
+import { useNavigate } from 'react-router-dom';
 
 export default function Element(){
 
@@ -15,6 +16,7 @@ export default function Element(){
     const [selectedComposant, setSelectedComposant] = useState(null);
     const [listPhoto, setListPhoto] = useState([]);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     function handleCreateElement(){
 
@@ -29,7 +31,7 @@ export default function Element(){
         let photos = [{
             "secteur_id": selectedSecteur,
             "composant_id": selectedComposant,
-            "image": listPhoto[0]
+            "image": listPhoto
         }]
 
         dispatch(setElements(element));
@@ -37,11 +39,11 @@ export default function Element(){
 
         addElement(idVisite,element).then((response) => {
             if(response.status === 200 || response.status === 201){
-                addPhoto(idVisite,photos).then((response) => {
-                    console.log(response);
-                })
+                addPhoto(idVisite,photos)
             } 
-        })
+        }).then(
+            navigate('/recap')
+        )
     }
 
     return(
@@ -77,7 +79,7 @@ const SelectSecteurs = ({listSecteurs, setListSecteurs, setSelectedSecteur}) => 
         getSecteurs().then((response) => {
             setListSecteurs(response.data.data);
         })
-    }, []);
+    }, [setListSecteurs]);
 
     const handleSelect = (e) => {
         e.preventDefault();
@@ -101,7 +103,7 @@ const SelectComposants = ({listComposants, setListComposants, setSelectedComposa
         getComposants().then((response) => {
             setListComposants(response.data.data);
         })
-    }, []);
+    }, [setListComposants]);
 
     const handleSelect = (e) => {
         e.preventDefault();
