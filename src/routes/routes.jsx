@@ -8,6 +8,7 @@ import { ProtectedRoute } from "./protectedRoute";
 import { RedirectHome } from "./redirectToHome";
 import InfoGenerale from '../components/visite/infoGenerale';
 import Element from '../components/visite/element';
+import Recapitulatif from '../components/visite/recapitulatif';
 
 const router = createBrowserRouter([
     {
@@ -38,6 +39,11 @@ const router = createBrowserRouter([
     {
       path: "/element",
       element: <ProtectedRoute><Element /></ProtectedRoute>,
+      errorElement: <BasicErrorPage />,
+    },
+    {
+      path: "/recap",
+      element: <ProtectedRoute><Recapitulatif /></ProtectedRoute>,
       errorElement: <BasicErrorPage />,
     },
 ]);

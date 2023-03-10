@@ -16,6 +16,19 @@ export async function getVisites(){
     })
 }
 
+// Api call pour récuperer une visite
+export async function getOneVisite(idVisite){
+    // récupère le token du store
+    const authToken = getCurrentStateFromStore().token.value;
+    return api.request({
+        url: "/visite/"+idVisite,
+        method: "GET",
+        headers: {
+            'Authorization': `Bearer ${authToken}` 
+        }
+    })
+}
+
 // Api call pour créer une visite
 export async function addVisite(visite){
     // récupère le token du store
@@ -86,6 +99,20 @@ export async function addElement(idVisite, element){
         method: "POST",
         headers: {
             'Authorization': `Bearer ${authToken}`,
+        },
+        data: element
+    })
+}
+
+// Api call pour supprimer un element
+export async function deleteElement(idVisite, element){
+    // récupère le token du store
+    const authToken = getCurrentStateFromStore().token.value;
+    return api.request({
+        url: "/visite/"+idVisite+"/element",
+        method: "DELETE",
+        headers: {
+            'Authorization': `Bearer ${authToken}` 
         },
         data: element
     })
