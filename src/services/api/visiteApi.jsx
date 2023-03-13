@@ -56,6 +56,20 @@ export async function deleteVisite(idVisite){
     })
 }
 
+// Api call pour mettre à jour le commentaire d'une visite
+export async function updateCommentaire(idVisite,commentaire){
+    // récupère le token du store
+    const authToken = getCurrentStateFromStore().token.value;
+    return api.request({
+        url: "/visite/"+idVisite+"/commentaire",
+        method: "PUT",
+        headers: {
+            'Authorization': `Bearer ${authToken}` 
+        },
+        data: commentaire
+    })
+}
+
 //--PERSONNES--
 
 // Api call pour récuperer la liste des personnes
@@ -118,8 +132,6 @@ export async function deleteElement(idVisite, element){
     })
 }
 
-
-
 //--SECTEURS--
 
 // Api call pour récuperer la liste des secteurs
@@ -150,6 +162,21 @@ export async function getComposants(){
     })
 }
 
+//--SIGNATURE--
+
+// Api call pour ajouter une signature
+export async function addSignature(idVisite, signature){
+    // récupère le token du store
+    const authToken = getCurrentStateFromStore().token.value;
+    return api.request({
+        url: "/visite/"+idVisite+"/signature",
+        method: "POST",
+        headers: {
+            'Authorization': `Bearer ${authToken}`,
+        },
+        data: signature
+    })
+}
 
 //--PARAMETRES--
 

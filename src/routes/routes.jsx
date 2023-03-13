@@ -9,6 +9,9 @@ import { RedirectHome } from "./redirectToHome";
 import InfoGenerale from '../components/visite/infoGenerale';
 import Element from '../components/visite/element';
 import Recapitulatif from '../components/visite/recapitulatif';
+import Signature from '../components/visite/signature';
+import ListeSignature from '../components/visite/listeSignature';
+import Cloture from '../components/visite/cloture';
 
 const router = createBrowserRouter([
     {
@@ -46,6 +49,21 @@ const router = createBrowserRouter([
       element: <ProtectedRoute><Recapitulatif /></ProtectedRoute>,
       errorElement: <BasicErrorPage />,
     },
+    {
+      path: "/signatures",
+      element: <ProtectedRoute><ListeSignature /></ProtectedRoute>,
+      errorElement: <BasicErrorPage />,
+    },
+    {
+      path: "/signature/:nomPersonne",
+      element: <ProtectedRoute><Signature /></ProtectedRoute>,
+      errorElement: <BasicErrorPage />,
+    },
+    {
+      path: "/cloture",
+      element: <ProtectedRoute><Cloture /></ProtectedRoute>,
+      errorElement: <BasicErrorPage />,
+    }
 ]);
 
 export default router;
