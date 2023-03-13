@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { getOneVisite, deleteElement } from '../../services/api/visiteApi';
 import { ReactComponent as Pen } from '../../assets/icons/pen.svg';
 import { ReactComponent as Trash } from '../../assets/icons/trash.svg';
@@ -38,8 +38,8 @@ export default function Recapitulatif(){
                     <TableauRecap listElement={listElement} idVisite={idVisite} setLoading={setLoading} setListELement={setListELement}/>
                 </div>
                 <div className="flex justify-center mt-12 mr-3 ml-3">
-                    <button className="w-full text-white bg-sky-600 rounded-md py-2 px-4 hover:bg-blue-600 m-1" onClick={() => {window.location.href="/element"}}>Créer un élément</button>
-                    <button className="w-full text-white bg-sky-600 rounded-md py-2 px-4 hover:bg-blue-600 m-1">Signatures &#62;</button>
+                    <button className="w-full text-white bg-sky-600 rounded-md py-2 px-4 hover:bg-sky-700 m-1" onClick={() => {window.location.href="/element"}}>Créer un élément</button>
+                    <button className="w-full text-white bg-sky-600 rounded-md py-2 px-4 hover:bg-sky-700 m-1" onClick={() => {window.location.href="/signatures"}}>Signatures</button>
                 </div>
             </div>
         )
@@ -67,7 +67,7 @@ const TableauRecap = ({listElement, idVisite, setLoading, setListELement}) => {
     if(listElement.length > 0){
 
         return(
-            <div className="divide-y divide-gray-200 bg-neutral-800 rounded-md p-1">
+            <div className="divide-y divide-orange-600 bg-neutral-800 rounded-md p-1">
                 <div className="grid grid-cols-7">
                     <div className="flex justify-center text-white text-sm pt-1 pb-2 col-span-2">
                         Secteur

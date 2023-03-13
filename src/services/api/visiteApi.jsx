@@ -56,6 +56,34 @@ export async function deleteVisite(idVisite){
     })
 }
 
+// Api call pour mettre à jour le commentaire d'une visite
+export async function updateCommentaire(idVisite,commentaire){
+    // récupère le token du store
+    const authToken = getCurrentStateFromStore().token.value;
+    return api.request({
+        url: "/visite/"+idVisite+"/commentaire",
+        method: "PUT",
+        headers: {
+            'Authorization': `Bearer ${authToken}` 
+        },
+        data: commentaire
+    })
+}
+
+// Api call pour mettre à jour la date de cloture d'une visite
+export async function updateDateCloture(idVisite,dateCloture){
+    // récupère le token du store
+    const authToken = getCurrentStateFromStore().token.value;
+    return api.request({
+        url: "/visite/"+idVisite+"/cloture",
+        method: "PUT",
+        headers: {
+            'Authorization': `Bearer ${authToken}` 
+        },
+        data: dateCloture
+    })
+}
+
 //--PERSONNES--
 
 // Api call pour récuperer la liste des personnes
@@ -118,8 +146,6 @@ export async function deleteElement(idVisite, element){
     })
 }
 
-
-
 //--SECTEURS--
 
 // Api call pour récuperer la liste des secteurs
@@ -150,6 +176,36 @@ export async function getComposants(){
     })
 }
 
+//--SIGNATURE--
+
+// Api call pour ajouter une signature
+export async function addSignature(idVisite, signature){
+    // récupère le token du store
+    const authToken = getCurrentStateFromStore().token.value;
+    return api.request({
+        url: "/visite/"+idVisite+"/signature",
+        method: "POST",
+        headers: {
+            'Authorization': `Bearer ${authToken}`,
+        },
+        data: signature
+    })
+}
+
+//--PDF--
+
+// Api call pour récuperer le rapport
+export async function getPdf(idVisite){
+    // récupère le token du store
+    const authToken = getCurrentStateFromStore().token.value;
+    return api.request({
+        url: "/visite/"+idVisite+"/pdf",
+        method: "GET",
+        headers: {
+            'Authorization': `Bearer ${authToken}` 
+        }
+    })
+}
 
 //--PARAMETRES--
 

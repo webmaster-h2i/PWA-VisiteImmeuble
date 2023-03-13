@@ -23,7 +23,7 @@ export default function Home() {
           </div>
           <div className='flex justify-center mb-7'>
             <a href={"/visite"}>
-              <button className='bg-sky-600 hover:bg-sky-800 text-white font-bold py-3 px-3 rounded-full shadow-2xl'>
+              <button className='bg-orange-600 hover:bg-sky-800 text-white font-bold py-3 px-3 rounded-full shadow-2xl'>
                 <Plus className='w-8'/>
               </button>
             </a>
@@ -102,12 +102,12 @@ function VisitesEnCours({setError}){
                 </div>
                 <div className='inline-flex items-center'>
                   <div className='p-1'>
-                  <button className='bg-sky-600 text-white py-1 px-1 rounded-full shadow-2xl'>
+                  <button className='bg-orange-600 text-white py-1 px-1 rounded-full shadow-2xl'>
                     <Pen className='w-4'/>
                   </button>
                   </div>
                   <div className='p-1'>
-                  <button className='bg-sky-600 text-white py-1 px-1 rounded-full shadow-2xl' onClick={(e) => handleDeleteVisite(e,visite.id)}>
+                  <button className='bg-orange-600 text-white py-1 px-1 rounded-full shadow-2xl' onClick={(e) => handleDeleteVisite(e,visite.id)}>
                     <Trash className='w-4'/>
                   </button>
                   </div>

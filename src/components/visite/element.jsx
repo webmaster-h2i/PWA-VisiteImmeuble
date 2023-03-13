@@ -7,6 +7,10 @@ import { useNavigate } from 'react-router-dom';
 export default function Element(){
 
     const idVisite = useSelector((visite) => visite.visite.visite.idVisite);
+    const vis = useSelector((visite) => visite);
+
+    console.log(vis);
+
     const [checkConforme, setCheckConforme] = useState('Non');
     const [checkOs, setCheckOs] = useState('Non');
     const [commentaire, setCommentaire] = useState('');
@@ -67,7 +71,8 @@ export default function Element(){
                 <UploadPhoto listPhoto={listPhoto} setListPhoto={setListPhoto} selectedSecteur={selectedSecteur} selectedComposant={selectedComposant}/>
             </div>
             <div className="flex justify-center mt-12 mr-3 ml-3">
-                <button className="w-full text-white bg-sky-600 rounded-md py-2 px-4 hover:bg-blue-600" onClick={handleCreateElement}>Créer l'élément</button>
+                <button className="w-full text-white bg-sky-600 hover:bg-sky-700 rounded-md py-2 px-4 m-1" onClick={handleCreateElement}>Créer l'élément</button>
+                <button className="w-full text-white bg-sky-600 hover:bg-sky-700 rounded-md py-2 px-4 m-1" onClick={() => {window.location.href="/recap"}}>Récapitulatif</button>
             </div>
         </div>
     )
@@ -89,7 +94,7 @@ const SelectSecteurs = ({listSecteurs, setListSecteurs, setSelectedSecteur}) => 
     return(
         <div className="mt-9 mr-3 ml-3 mb-3">
             <label htmlFor="Secteur" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Parties communes</label>
-            <select onChange={handleSelect} id="Secteur" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+            <select onChange={handleSelect} id="Secteur" className="border text-sm rounded-lg focus:ring-orange-600 focus:border-orange-600 block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white">
                 <option defaultValue></option>
                 {listSecteurs.map(secteur => <option className="text-lg" value={secteur.id} key={secteur.id}>{secteur.nom}</option>)}
             </select>
@@ -113,7 +118,7 @@ const SelectComposants = ({listComposants, setListComposants, setSelectedComposa
     return(
         <div className="mt-9 mr-3 ml-3 mb-3">
             <label htmlFor="composants" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Composant</label>
-            <select onChange={handleSelect} id="composants" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+            <select onChange={handleSelect} id="composants" className="border text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-orange-600 focus:border-orange-600">
                 <option defaultValue></option>
                 { selectedSecteur ? listComposants.map(composant => <option className="text-lg" value={composant.id} key={composant.id}>{composant.nom}</option>): ''}
             </select>
@@ -125,14 +130,14 @@ const CheckBoxes = ({checkConforme,setCheckConforme,checkOs,setCheckOs}) => {
     return(
         <div className="m-3">
             <label className="relative inline-flex items-center cursor-pointer">
-            <input onChange={(conf) => conf.target.checked ? setCheckConforme('Oui'):setCheckConforme('Non')} type="checkbox" value="" className="sr-only peer" />
-            <div className="w-10 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-            <span className="ml-3 text-xs font-medium text-gray-900 dark:text-gray-300">Conforme: {checkConforme}</span>
-            </label>
-            <label className="relative inline-flex items-center cursor-pointer ml-5">
-            <input onChange={(os) => os.target.checked ? setCheckOs('Oui'):setCheckOs('Non')} type="checkbox" value="" className="sr-only peer" />
-            <div className="w-10 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-            <span className="ml-3 text-xs font-medium text-gray-900 dark:text-gray-300">Nécessite OS: {checkOs}</span>
+                <input onChange={(conf) => conf.target.checked ? setCheckConforme('Oui'):setCheckConforme('Non')} type="checkbox" value="" className="sr-only peer" />
+                <div className="w-10 h-5 rounded-full dark:bg-gray-700 peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all border-gray-600 peer-checked:bg-orange-600"></div>
+                <span className="ml-3 text-xs font-medium text-gray-900 dark:text-gray-300">Conforme: {checkConforme}</span>
+                </label>
+                <label className="relative inline-flex items-center cursor-pointer ml-5">
+                <input onChange={(os) => os.target.checked ? setCheckOs('Oui'):setCheckOs('Non')} type="checkbox" value="" className="sr-only peer" />
+                <div className="w-10 h-5 rounded-full dark:bg-gray-700 peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all border-gray-600 peer-checked:bg-orange-600"></div>
+                <span className="ml-3 text-xs font-medium text-gray-900 dark:text-gray-300">Nécessite OS: {checkOs}</span>
             </label>
         </div>
     )
@@ -141,8 +146,8 @@ const CheckBoxes = ({checkConforme,setCheckConforme,checkOs,setCheckOs}) => {
 const Commentaire = ({setCommentaire}) => {
     return(
         <div className="mt-9 mr-3 ml-3 mb-3">
-            <label htmlFor="commentaire" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Commentaire</label>
-            <textarea id="commentaire" rows="4" className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Commentaire" onChange={(com) => setCommentaire(com.target.value)}></textarea>
+            <label htmlFor="commentaire" className="block mb-2 text-sm font-medium text-white">Commentaire</label>
+            <textarea id="commentaire" rows="4" className="block p-2.5 w-full text-sm rounded-lg bg-gray-700 placeholder-gray-400 text-white" placeholder="Commentaire" onChange={(com) => setCommentaire(com.target.value)}></textarea>
         </div>
     )
 }

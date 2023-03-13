@@ -23,9 +23,11 @@ export default function Navbar (){
                         <a href={"/accueil"}>
                             <IconHome className='w-6'/>
                         </a>
+                       {/*
                         <a href={"/accueil"}>
                             <IconUser className='w-6'/>
                         </a>
+                        */}
                     </div>
                 </div>
             </nav>
