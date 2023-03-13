@@ -1,5 +1,14 @@
 == Changelog ==
 
+0.21 - 13/03/2023
+
+added
+
+- Création de la page récapitulatif
+- Création de la page signatures
+- Création de la page clôture
+- Requêtes API
+
 0.17 - 09/03/2023
 
 added
