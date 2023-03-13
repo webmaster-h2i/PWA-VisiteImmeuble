@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { updateCommentaire } from "../../services/api/visiteApi";
+import { updateCommentaire, updateDateCloture, getPdf } from "../../services/api/visiteApi";
 import { useSelector } from 'react-redux';
 import Loader from '../../components/loader';
 import DatePicker from "react-datepicker";
@@ -26,14 +26,25 @@ export default function Cloture(){
             "commentaire": newComm
         }]
         updateCommentaire(idVisite,commFormat).then((response) => {
-            console.log(response)  
+             
         })
         setLoading(false);
     }
 
     //Ajoute une date de cloture à la visite et renvoi le rapport
     function handleCloture(){
-        console.log(moment(clotureDate).format("YYYY-MM-DD HH:mm:ss"));
+        setLoading(true);
+        let cloture = [{
+            "date_cloture": moment(clotureDate).format("YYYY-MM-DD HH:mm:ss")
+        }]
+        updateDateCloture(idVisite,cloture).then((response) => {
+             console.log(response);
+        }).then(
+            getPdf(idVisite).then((response) => {
+                console.log(response);
+            })
+        )
+        setLoading(false);
     }
 
     if(loading){

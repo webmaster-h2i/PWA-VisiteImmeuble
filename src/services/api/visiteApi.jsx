@@ -70,6 +70,20 @@ export async function updateCommentaire(idVisite,commentaire){
     })
 }
 
+// Api call pour mettre à jour la date de cloture d'une visite
+export async function updateDateCloture(idVisite,dateCloture){
+    // récupère le token du store
+    const authToken = getCurrentStateFromStore().token.value;
+    return api.request({
+        url: "/visite/"+idVisite+"/cloture",
+        method: "PUT",
+        headers: {
+            'Authorization': `Bearer ${authToken}` 
+        },
+        data: dateCloture
+    })
+}
+
 //--PERSONNES--
 
 // Api call pour récuperer la liste des personnes
@@ -175,6 +189,21 @@ export async function addSignature(idVisite, signature){
             'Authorization': `Bearer ${authToken}`,
         },
         data: signature
+    })
+}
+
+//--PDF--
+
+// Api call pour récuperer le rapport
+export async function getPdf(idVisite){
+    // récupère le token du store
+    const authToken = getCurrentStateFromStore().token.value;
+    return api.request({
+        url: "/visite/"+idVisite+"/pdf",
+        method: "GET",
+        headers: {
+            'Authorization': `Bearer ${authToken}` 
+        }
     })
 }
 
