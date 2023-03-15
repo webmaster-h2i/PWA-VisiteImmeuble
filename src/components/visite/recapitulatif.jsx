@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { getOneVisite, deleteElement } from '../../services/api/visiteApi';
 import { ReactComponent as Pen } from '../../assets/icons/pen.svg';
 import { ReactComponent as Trash } from '../../assets/icons/trash.svg';
@@ -17,36 +17,29 @@ export default function Recapitulatif(){
 
     useEffect(() => {
         getOneVisite(idVisite).then((response) => {
-            console.log(response)
             setListELement(response.data.data.elements)
             setLoading(false)
         })
     },[]);
 
-    if(loading){
-        return(
-            <Loader/>
-        )
-    }else{
-        return(
-            <div>
-                <div className="flex justify-center m-9">
-                    <h3 className="text-lg text-white">Récapitulatif</h3>
-                </div>
-                <ErrorMessage errors={error}/>
-                <div className="p-2">
-                    <TableauRecap listElement={listElement} idVisite={idVisite} setLoading={setLoading} setListELement={setListELement}/>
-                </div>
-                <div className="flex justify-center mt-12 mr-3 ml-3">
-                    <button className="w-full text-white bg-sky-600 rounded-md py-2 px-4 hover:bg-sky-700 m-1" onClick={() => {window.location.href="/element"}}>Créer un élément</button>
-                    <button className="w-full text-white bg-sky-600 rounded-md py-2 px-4 hover:bg-sky-700 m-1" onClick={() => {window.location.href="/signatures"}}>Signatures</button>
-                </div>
+    return(
+        <div>
+            <div className="flex justify-center m-9">
+                <h3 className="text-lg text-white">Récapitulatif</h3>
             </div>
-        )
-    }
+            <ErrorMessage errors={error}/>
+            <div className="p-2">
+                <TableauRecap listElement={listElement} idVisite={idVisite} setLoading={setLoading} loading={loading} setListELement={setListELement}/>
+            </div>
+            <div className="flex justify-center mt-12 mr-3 ml-3">
+                <button className="w-full text-white bg-sky-600 rounded-md py-2 px-4 hover:bg-sky-700 m-1" onClick={() => {window.location.href="/element"}}>Créer un élément</button>
+                <button className="w-full text-white bg-sky-600 rounded-md py-2 px-4 hover:bg-sky-700 m-1" onClick={() => {window.location.href="/signatures"}}>Signatures</button>
+            </div>
+        </div>
+    )
 }
 
-const TableauRecap = ({listElement, idVisite, setLoading, setListELement}) => {
+const TableauRecap = ({listElement, idVisite, setLoading, loading, setListELement}) => {
 
     //Call Api pour supprimer un element
     function handleDeleteElement(e, secteurId, composantId){
@@ -56,13 +49,17 @@ const TableauRecap = ({listElement, idVisite, setLoading, setListELement}) => {
             composant_id: composantId
         }]
         setLoading(true)
-        deleteElement(idVisite, element).then(
-            getOneVisite(idVisite).then((response) => {
-                setListELement(response.data.data.elements)
-                setLoading(false)
-            })
-        )
+        deleteElement(idVisite, element).then((response) => {
+            if(response.status === 200 || response.status === 201){
+                //MAJ de l'état de la liste des éléments en enlevant l'élément supprimé
+                let filterList = listElement.filter(element => element.visite_id !== idVisite);
+                setListELement(filterList);
+            }
+        })
+        setLoading(false);
     }
+
+    if(loading){return(<Loader/>)}
 
     if(listElement.length > 0){
 

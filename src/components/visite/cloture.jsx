@@ -14,20 +14,13 @@ export default function Cloture(){
     const [loading, setLoading] = useState(false);
     const idVisite = useSelector((visite) => visite.visite.visite.idVisite);
 
-    //Ouvre la modal de dialogue lors de la clôture
-    function openAlert(){
-        document.getElementById('favDialog').showModal();
-    }
-
     //Update le commentaire (mot du gestionnaire) dès que la textarea n'est plus focus 
     function updateComm(newComm){
         setLoading(true);
         let commFormat = [{
             "commentaire": newComm
         }]
-        updateCommentaire(idVisite,commFormat).then((response) => {
-             
-        })
+        updateCommentaire(idVisite,commFormat);
         setLoading(false);
     }
 
@@ -37,24 +30,23 @@ export default function Cloture(){
         let cloture = [{
             "date_cloture": moment(clotureDate).format("YYYY-MM-DD HH:mm:ss")
         }]
-        updateDateCloture(idVisite,cloture).then((response) => {
-             console.log(response);
-        }).then(
+
+        updateDateCloture(idVisite,cloture).then(
             getPdf(idVisite).then((response) => {
-                console.log(response);
+                let file = new Blob([response.data], {type: 'application/pdf'});
+                let fileURL = URL.createObjectURL(file);
+                window.open(fileURL);
             })
         )
         setLoading(false);
     }
 
     if(loading){
-        return(
-            <Loader/>
-        )
+        return(<Loader/>)
     }else{
         return(
             <div>
-                <dialog id="favDialog" className="bg-gray-800">
+                <dialog id="clotureDialog" className="bg-gray-800">
                     <form method="dialog">
                         <div className="flex justify-center m-5">
                             <h3 className="text-lg text-white">Clôture de la visite</h3>
@@ -82,7 +74,7 @@ export default function Cloture(){
                 </div>
                 <div className="flex justify-center mt-12 mr-3 ml-3">
                     <button className="w-full text-white bg-sky-600 hover:bg-sky-700 rounded-md py-2 px-4 m-1" onClick={() => {window.location.href="/signatures"}}>Signatures</button>
-                    <button className="w-full text-white bg-sky-600 hover:bg-sky-700 rounded-md py-2 px-4 m-1" onClick={openAlert}>Clôturer</button>
+                    <button className="w-full text-white bg-sky-600 hover:bg-sky-700 rounded-md py-2 px-4 m-1" onClick={() => document.getElementById('clotureDialog').showModal()}>Clôturer</button>
                 </div>
             </div>
         )

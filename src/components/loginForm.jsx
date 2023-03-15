@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from "react-redux";
-import { setToken } from "../store/tokenSlice.jsx";
+import { setToken, setUser } from "../store/tokenSlice.jsx";
 import { signIn } from "../services/api/userApi";
 import  ErrorMessage  from './errorMessage';
 
@@ -18,6 +18,8 @@ export default function Login() {
     signIn(email,password).then((response) => {
         // Ajout du token dans un state global ( utilisation de Redux )
         dispatch(setToken(response.data.token));
+        // Ajout des infos de l'utilisateur connecté dans un state global 
+        dispatch(setUser(response.data.user));
         // Redirection vers la route immeubles ( utilisation du Router react ) 
         navigate('/accueil');
     }).catch(e => {

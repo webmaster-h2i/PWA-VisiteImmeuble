@@ -201,6 +201,7 @@ export async function getPdf(idVisite){
     return api.request({
         url: "/visite/"+idVisite+"/pdf",
         method: "GET",
+        responseType: 'blob',
         headers: {
             'Authorization': `Bearer ${authToken}` 
         }
