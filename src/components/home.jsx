@@ -155,7 +155,17 @@ function Immeubles(){
 
   if(loading){return(<Loader/>)}
 
-  if(listImmeubles.length > 0){
+  if(listImmeubles.length <= 0){
+    return(
+      <ul className='max-w-md divide-y divide-gray-200 bg-neutral-800 rounded-md p-2'>
+        <li>
+          <div className='flex justify-center text-white'>
+            <h5>Aucun immeuble</h5>
+          </div>
+        </li>
+      </ul>
+    )
+  }else{
     return(
       <ul className='max-w-md divide-y divide-gray-200 bg-neutral-800 rounded-md p-3'>
         {listImmeubles.map((immeuble, index) =>
@@ -176,16 +186,6 @@ function Immeubles(){
             <DetailsImmeuble details={immeuble} ref={(element) => {childRef.current[index] = element}} />
           </li>
         )}
-      </ul>
-    )
-  }else{
-    return(
-      <ul className='max-w-md divide-y divide-gray-200 bg-neutral-800 rounded-md p-2'>
-        <li>
-          <div className='flex justify-center text-white'>
-            <h5>Aucun immeuble</h5>
-          </div>
-        </li>
       </ul>
     )
   }

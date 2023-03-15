@@ -4,7 +4,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { registerLocale } from  "react-datepicker";
 import { fr } from 'date-fns/locale';
 import CreatableSelect from 'react-select/creatable';
-import { getPersonnes, addVisite, getOneVisite } from '../../services/api/visiteApi';
+import { getPersonnes, addVisite, getOneVisite, updateVisite } from '../../services/api/visiteApi';
 import { useSelector, useDispatch } from 'react-redux';
 import { setIdVisite, setinfoGenerales, setVisite } from "../../store/visiteSlice.jsx";
 import { useNavigate, useParams } from 'react-router-dom';
@@ -24,9 +24,11 @@ export default function InfoGenerale(){
 
     useEffect(() => {
         getPersonnes().then((response) => {
+            //Récupère la liste des utilisateurs
             response.data.data.map((personne)=>
                 setparticipants(participants =>[...participants,{value: personne.code_personne, label: personne.nom + ' ' +personne.prenom}])
             )
+            //Si c'est une modification alors on récupère les data de la visite
             if(visiteIdParam){
                 getVisiteToUpdate();
             }
@@ -37,34 +39,36 @@ export default function InfoGenerale(){
     async function getVisiteToUpdate(){
         //Call API pour récupérer les informations de la visite
         await getOneVisite(visiteIdParam).then((response) =>{
-            console.log(response);
+            
+            //Modifie les states du composant pour afficher les data de la visite dans le formulaire
             response.data.data.personnes.map((parti) => 
-                setSelectedOption(selectedOption =>[...selectedOption,{value: parti.details.code_personne, label: parti.nom}])
+                setSelectedOption(selectedOption =>[...selectedOption,{value: parti.details ? parti.details.code_personne: parti.nom, label: parti.nom}])
             );
             setObjetVisite(response.data.data.objet);
             response.data.data.type === 'Contractuelle' ? setContractuelle('Oui'):setContractuelle('Non');
-            setStartDate(moment(response.data.data.date_creation, "dd/MM/yyyy HH:mm").toDate());
+            setStartDate(moment(response.data.data.date_creation, "DD/MM/YYYY HH:mm").toDate());
+
             //Set les infos de la visite à modifier dans le state visite global
             dispatch(setVisite({
                 "immeuble":response.data.data.immeuble.code_immeuble,
                 "idVisite": visiteIdParam,
                 "elements": response.data.data.elements,
                 "photos": [],
-                "info": []
+                "info": formatObjectInfo()
             }))    
         });
     }
 
     const immeuble = useSelector((visite) => visite.visite.visite.immeuble);
 
-    function handleCreateVisite(){
+    function formatObjectInfo(){
 
         //Création d'un tableau avec la liste des participants, si il est inscrit on ajoute son code, si il n'est pas inscrit on ajoute son nom
         let participantsVisite = [];
         selectedOption.map(participant => participantsVisite.push(participant.value))
 
         //Création de l'objet visite qui va être envoyé à l'API
-        let visite = [{
+        let info = [{
             "code_immeuble": immeuble,
             "date_creation": moment(startDate).format("YYYY-MM-DD HH:mm:ss"),
             "type": contractuelle === 'Oui' ? "Contractuelle" : "Ponctuelle",
@@ -72,12 +76,26 @@ export default function InfoGenerale(){
             "participants": participantsVisite,
         }]
 
-        //Call API
-        addVisite(visite).then((response) => {
-            dispatch(setIdVisite(response.data.data.id));
-            dispatch(setinfoGenerales(visite));
-            navigate("/element");
-        })
+        return info
+    }
+
+    function handleCreateVisite(){
+
+        let visite = formatObjectInfo();
+
+        //Si l'id de la visite est présent en paramètre alors on modifie la visite sinon on la créé
+        if(visiteIdParam){
+            updateVisite(visiteIdParam,visite).then(() => {
+                dispatch(setinfoGenerales(visite));
+                navigate("/recap");
+            })
+        }else{
+            addVisite(visite).then((response) => {
+                dispatch(setIdVisite(response.data.data.id));
+                dispatch(setinfoGenerales(visite));
+                navigate("/element");
+            })
+        }
     }
 
     return(

@@ -1,18 +1,20 @@
 import { useState } from "react";
 import { updateCommentaire, updateDateCloture, getPdf } from "../../services/api/visiteApi";
-import { useSelector } from 'react-redux';
-import Loader from '../../components/loader';
+import { useSelector } from "react-redux";
+import Loader from "../../components/loader";
 import DatePicker from "react-datepicker";
 import { registerLocale } from  "react-datepicker";
-import { fr } from 'date-fns/locale';
+import { fr } from "date-fns/locale";
 import moment from "moment";
-registerLocale('fr', fr)
+import { useNavigate } from "react-router-dom";
+registerLocale("fr", fr)
 
 export default function Cloture(){
 
     const [clotureDate, setClotureDate] = useState(new Date());
     const [loading, setLoading] = useState(false);
     const idVisite = useSelector((visite) => visite.visite.visite.idVisite);
+    const navigate = useNavigate();
 
     //Update le commentaire (mot du gestionnaire) dès que la textarea n'est plus focus 
     function updateComm(newComm){
@@ -36,7 +38,9 @@ export default function Cloture(){
                 let file = new Blob([response.data], {type: 'application/pdf'});
                 let fileURL = URL.createObjectURL(file);
                 window.open(fileURL);
-            })
+            }).then(
+                navigate('/accueil')
+            )
         )
         setLoading(false);
     }
