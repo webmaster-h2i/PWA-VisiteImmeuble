@@ -14,6 +14,9 @@ const visiteReducer = createSlice({
     name: 'visite',
     initialState,
     reducers: {
+        setVisite: (state, action) => {
+            state.visite = action.payload
+        },
         setImmeuble: (state, action) => {
             state.visite.immeuble = action.payload
         },
@@ -32,6 +35,6 @@ const visiteReducer = createSlice({
     }
 })
 
-export const { setImmeuble, setIdVisite, setElements, setPhotos, setinfoGenerales } = visiteReducer.actions
+export const { setImmeuble, setIdVisite, setElements, setPhotos, setinfoGenerales, setVisite } = visiteReducer.actions
 export const immeubleVisite = (state) => state.visite.value
 export default visiteReducer.reducer

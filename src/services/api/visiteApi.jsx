@@ -43,6 +43,21 @@ export async function addVisite(visite){
     })
 }
 
+// Api call pour modifier une visite
+export async function updateVisite(idVisite,visite){
+    // récupère le token du store
+    const authToken = getCurrentStateFromStore().token.value;
+    return api.request({
+        url: "/visite/"+idVisite,
+        method: "PUT",
+        headers: {
+            'Authorization': `Bearer ${authToken}`,
+        },
+        data: visite
+    })
+}
+
+
 // Api call pour supprimer une visite
 export async function deleteVisite(idVisite){
     // récupère le token du store
@@ -201,6 +216,7 @@ export async function getPdf(idVisite){
     return api.request({
         url: "/visite/"+idVisite+"/pdf",
         method: "GET",
+        responseType: 'blob',
         headers: {
             'Authorization': `Bearer ${authToken}` 
         }

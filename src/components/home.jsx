@@ -10,6 +10,7 @@ import { ReactComponent as Plus} from '../assets/icons/plus.svg';
 import { DetailsImmeuble } from './detailsImmeuble';
 import  ErrorMessage  from './errorMessage';
 import Loader from '../components/loader';
+import { useNavigate } from 'react-router-dom';
 
 export default function Home() {
 
@@ -23,7 +24,7 @@ export default function Home() {
           </div>
           <div className='flex justify-center mb-7'>
             <a href={"/visite"}>
-              <button className='bg-orange-600 hover:bg-sky-800 text-white font-bold py-3 px-3 rounded-full shadow-2xl'>
+              <button className='bg-orange-600 hover:bg-sky-700 text-white font-bold py-3 px-3 rounded-full shadow-2xl'>
                 <Plus className='w-8'/>
               </button>
             </a>
@@ -53,27 +54,43 @@ function VisitesEnCours({setError}){
 
   const [listVisite, setListVisite] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   //Call Api pour récupérer la liste des immeubles
   useEffect(() => {
-    getVisites().then((response) => {
-        setListVisite(response.data.data);
-    }).then( setLoading(false) )
+    getVisiteHome()
   },[]);
+
+  function getVisiteHome(){
+
+    getVisites().then((response) => {
+      response.data.data.map(visite => 
+        !visite.date_cloture ? setListVisite(listVisite =>[...listVisite,visite]):'',
+      )
+    }).then(setLoading(false))
+  }
 
   //Call Api pour supprimer une visite
   function handleDeleteVisite(event, idVisite){
+
     event.preventDefault();
     setLoading(true);
-    deleteVisite(idVisite).then( (response) => {
+    deleteVisite(idVisite).then((response) => {
       if(response.status !== 200){
         setError(response.data.message);
       }else{
-        getVisites().then((response) => {
-          setListVisite(response.data.data);
-        })
+        //MAJ de l'état de la liste des visite en enlevant la visite supprimée
+        let filterList = listVisite.filter( visite => visite.id !== idVisite);
+        setListVisite(filterList);
+        setLoading(false)
       }
-    }).then(setLoading(false))
+    })
+  }
+
+  function handleUpdateVisite(event, idVisite){
+
+    event.preventDefault();
+    navigate('/info/'+idVisite)
   }
 
   if(loading){return(<Loader/>)}
@@ -102,7 +119,7 @@ function VisitesEnCours({setError}){
                 </div>
                 <div className='inline-flex items-center'>
                   <div className='p-1'>
-                  <button className='bg-orange-600 text-white py-1 px-1 rounded-full shadow-2xl'>
+                  <button className='bg-orange-600 text-white py-1 px-1 rounded-full shadow-2xl' onClick={(e) => handleUpdateVisite(e,visite.id)}>
                     <Pen className='w-4'/>
                   </button>
                   </div>
@@ -138,7 +155,17 @@ function Immeubles(){
 
   if(loading){return(<Loader/>)}
 
-  if(listImmeubles.length > 0){
+  if(listImmeubles.length <= 0){
+    return(
+      <ul className='max-w-md divide-y divide-gray-200 bg-neutral-800 rounded-md p-2'>
+        <li>
+          <div className='flex justify-center text-white'>
+            <h5>Aucun immeuble</h5>
+          </div>
+        </li>
+      </ul>
+    )
+  }else{
     return(
       <ul className='max-w-md divide-y divide-gray-200 bg-neutral-800 rounded-md p-3'>
         {listImmeubles.map((immeuble, index) =>
@@ -159,16 +186,6 @@ function Immeubles(){
             <DetailsImmeuble details={immeuble} ref={(element) => {childRef.current[index] = element}} />
           </li>
         )}
-      </ul>
-    )
-  }else{
-    return(
-      <ul className='max-w-md divide-y divide-gray-200 bg-neutral-800 rounded-md p-2'>
-        <li>
-          <div className='flex justify-center text-white'>
-            <h5>Aucun immeuble</h5>
-          </div>
-        </li>
       </ul>
     )
   }

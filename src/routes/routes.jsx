@@ -35,7 +35,7 @@ const router = createBrowserRouter([
       errorElement: <BasicErrorPage />,
     },
     {
-      path: "/info",
+      path: "/info/:visiteIdParam?",
       element: <ProtectedRoute><InfoGenerale /></ProtectedRoute>,
       errorElement: <BasicErrorPage />,
     },

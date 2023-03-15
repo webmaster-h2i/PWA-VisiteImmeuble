@@ -7,10 +7,6 @@ import { useNavigate } from 'react-router-dom';
 export default function Element(){
 
     const idVisite = useSelector((visite) => visite.visite.visite.idVisite);
-    const vis = useSelector((visite) => visite);
-
-    console.log(vis);
-
     const [checkConforme, setCheckConforme] = useState('Non');
     const [checkOs, setCheckOs] = useState('Non');
     const [commentaire, setCommentaire] = useState('');
@@ -22,6 +18,7 @@ export default function Element(){
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
+    //Récupère et formate l'élément et les photos et fait le call API
     function handleCreateElement(){
 
         let element = [{
@@ -43,11 +40,9 @@ export default function Element(){
 
         addElement(idVisite,element).then((response) => {
             if(response.status === 200 || response.status === 201){
-                addPhoto(idVisite,photos)
+                addPhoto(idVisite,photos).then(navigate('/recap'))
             } 
-        }).then(
-            navigate('/recap')
-        )
+        })
     }
 
     return(
@@ -155,7 +150,6 @@ const Commentaire = ({setCommentaire}) => {
 const UploadPhoto = ({listPhoto, setListPhoto, selectedSecteur, selectedComposant}) => {
 
     function handleFileUpload(file){
-
         //Converti la photo en fichier base64
         let reader = new FileReader();
         reader.readAsDataURL(file[0]);

@@ -5,7 +5,7 @@ import { immeubleVisite, setImmeuble } from '../../store/visiteSlice.jsx';
 import { getImmeubles } from '../../services/api/immeubleApi';
 import  ErrorMessage  from '../errorMessage';
 
-export default function SelectImmeuble (){
+export default function SelectImmeuble() {
 
     const immeubleVis = useSelector(immeubleVisite);
     const dispatch = useDispatch();
@@ -45,7 +45,7 @@ export default function SelectImmeuble (){
                             {listImmeubles.map(immeuble => <option className="text-lg" value={immeuble.code_immeuble} key={immeuble.code_immeuble}>{immeuble.code_immeuble} - {immeuble.nom}</option>)}
                         </select>
                         <div className="flex justify-center mt-5">
-                            <button className="w-full text-white bg-sky-600 rounded-lg py-2 px-4 hover:bg-blue-600" onClick={handleclick}>Valider</button>
+                            <button className="w-full text-white bg-sky-600 rounded-lg py-2 px-4 hover:bg-sky-700" onClick={handleclick}>Valider</button>
                         </div>
                     </div>
                 </div>
