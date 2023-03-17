@@ -8,6 +8,7 @@ import { getPersonnes, addVisite, getOneVisite, updateVisite } from '../../servi
 import { useSelector, useDispatch } from 'react-redux';
 import { setIdVisite, setinfoGenerales, setVisite } from "../../store/visiteSlice.jsx";
 import { useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import moment from "moment";
 registerLocale('fr', fr)
 
@@ -115,7 +116,7 @@ export default function InfoGenerale(){
             <div className="mt-9">
                 <ObjetVisite setObjetVisite={setObjetVisite} objetVisite={objetVisite}/>
             </div>
-            <div className="flex justify-center mt-9 mr-3 ml-3">
+            <div className="flex justify-center mt-9 mr-2 ml-2 mb-5">
                 <button className="w-full text-white bg-sky-600 rounded-md py-2 px-4 hover:bg-sky-700" onClick={handleCreateVisite}>Ajout d'élément</button>
             </div>
         </div>

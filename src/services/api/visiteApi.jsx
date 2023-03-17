@@ -99,6 +99,20 @@ export async function updateDateCloture(idVisite,dateCloture){
     })
 }
 
+// Api call pour mettre à jour le déclarant d'une visite
+export async function updateDeclarant(idVisite,declarant){
+    // récupère le token du store
+    const authToken = getCurrentStateFromStore().token.value;
+    return api.request({
+        url: "/visite/"+idVisite+"/declarant",
+        method: "PUT",
+        headers: {
+            'Authorization': `Bearer ${authToken}` 
+        },
+        data: declarant
+    })
+}
+
 //--PERSONNES--
 
 // Api call pour récuperer la liste des personnes
@@ -131,6 +145,19 @@ export async function addPhoto(idVisite, photos){
     })
 }
 
+// Api call pour supprimer une photo
+export async function deletePhoto(idVisite, idPhoto){
+    // récupère le token du store
+    const authToken = getCurrentStateFromStore().token.value;
+    return api.request({
+        url: "/visite/"+idVisite+"/photo/"+idPhoto,
+        method: "DELETE",
+        headers: {
+            'Authorization': `Bearer ${authToken}` 
+        },
+    })
+}
+
 //--ELEMENTS--
 
 // Api call pour créer un élément
@@ -144,6 +171,19 @@ export async function addElement(idVisite, element){
             'Authorization': `Bearer ${authToken}`,
         },
         data: element
+    })
+}
+
+// Api call pour créer un élément
+export async function getOneElement(idVisite, secteur, composant){
+    // récupère le token du store
+    const authToken = getCurrentStateFromStore().token.value;
+    return api.request({
+        url: "/visite/"+idVisite+"/element/"+secteur+"/"+composant,
+        method: "GET",
+        headers: {
+            'Authorization': `Bearer ${authToken}`,
+        },
     })
 }
 

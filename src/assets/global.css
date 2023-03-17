@@ -17,3 +17,7 @@ body
     font-family: 'Comfortaa', cursive;
     font-family: 'Figtree', sans-serif;
 }
+
+dialog::backdrop{ 
+    backdrop-filter: brightness(20%);
+}

@@ -11,23 +11,26 @@ import { DetailsImmeuble } from './detailsImmeuble';
 import  ErrorMessage  from './errorMessage';
 import Loader from '../components/loader';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from "react-redux";
+import { setImmeuble } from '../store/visiteSlice.jsx';
+import { NotifyToaster } from '../components/notifyToast';
 
 export default function Home() {
 
   const [error, setError] = useState('');
+  const selectImmeubleDialog = useRef('');
 
   return (
     <div>
+      <SelectImmeuble selectImmeubleDialog={selectImmeubleDialog}/>
       <div className='p-3'>
           <div className='flex justify-center pb-3'>
             <h1 className='text-white md:text-3xl text-3xl text-center p-5'>Bienvenue sur Navilite</h1>
           </div>
           <div className='flex justify-center mb-7'>
-            <a href={"/visite"}>
-              <button className='bg-orange-600 hover:bg-sky-700 text-white font-bold py-3 px-3 rounded-full shadow-2xl'>
+              <button className='bg-orange-600 hover:bg-sky-700 text-white font-bold py-3 px-3 rounded-full shadow-2xl' onClick={() => selectImmeubleDialog.current.showModal()}>
                 <Plus className='w-8'/>
               </button>
-            </a>
           </div>
           <ErrorMessage errors={error}/>
           <div className='bg-sky-700 rounded-lg p-3'>
@@ -49,8 +52,62 @@ export default function Home() {
   );
 }
 
+const SelectImmeuble = ({selectImmeubleDialog}) => {
+
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const [listImmeubles, setListImmeubles] = useState([]);
+    const [selectedImmeuble, setSelectedImmeuble] = useState(null);
+
+    useEffect(() => {
+        getImmeubles().then((response) => {
+            setListImmeubles(response.data.data);
+        })
+    }, []);
+
+    const handleSelect = (e) => {
+        e.preventDefault();
+        dispatch(setImmeuble(e.target.value));
+        setSelectedImmeuble(e.target.value);
+    }
+
+    const handleclick = (e) => {
+        e.preventDefault();
+        if(selectedImmeuble){
+            NotifyToaster('Début de la visite', 'success');
+            navigate('/info');
+        }
+    }
+
+    return(
+      <div>
+        <dialog ref={selectImmeubleDialog} id="signatureDialog" className="bg-gray-800 w-full bdrp">
+            <form method="dialog">
+                <div className="m-2">
+                  <div className="mt-9">
+                    <label htmlFor="immeubles" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Selectionner un immeuble</label>
+                    <select id="immeubles" onChange={handleSelect} className="w-full max-w-md border text-sm rounded-lg focus:ring-orange-600 focus:border-orange-600 p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white">
+                        <option defaultValue></option>
+                        {listImmeubles.map(immeuble => <option className="text-lg" value={immeuble.code_immeuble} key={immeuble.code_immeuble}>{immeuble.code_immeuble} - {immeuble.nom}</option>)}
+                    </select>
+                  </div>
+                </div>
+                <menu>
+                    <div className="flex justify-center mt-12 mr-3 ml-3">
+                        <button className="w-full text-white  hover:bg-sky-700 rounded-md py-2 px-4 m-1" value="close">Annuler</button>
+                        <button className="w-full text-white  hover:bg-sky-700 rounded-md py-2 px-4 m-1" onClick={handleclick}>Valider</button>
+                    </div>
+                </menu>
+            </form>
+        </dialog>
+      </div>
+    )
+}
+
+
+
 //Renvoi la liste des visites en cours
-function VisitesEnCours({setError}){
+const VisitesEnCours = ({setError}) => {
 
   const [listVisite, setListVisite] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -88,7 +145,7 @@ function VisitesEnCours({setError}){
   }
 
   function handleUpdateVisite(event, idVisite){
-
+    
     event.preventDefault();
     navigate('/info/'+idVisite)
   }
@@ -97,7 +154,7 @@ function VisitesEnCours({setError}){
 
   if(listVisite.length <= 0){
     return(
-      <ul className='max-w-md divide-y divide-gray-200 bg-neutral-800 rounded-md p-2'>
+      <ul className='divide-y divide-gray-200 bg-neutral-800 rounded-md p-2'>
         <li>
           <div className='flex justify-center text-white'>
             <h5>Aucune visite en cours</h5>
@@ -107,7 +164,7 @@ function VisitesEnCours({setError}){
     )
   }else{
     return(
-      <ul className='max-w-md divide-y divide-gray-200 bg-neutral-800 rounded-md p-2'>
+      <ul className='divide-y divide-gray-200 bg-neutral-800 rounded-md p-2'>
         {listVisite.map((visite, index) =>
           <li key={index} className='pb-3 sm:pb-4 pt-2'>
             <div className='flex items-center space-x-3 p-1'>
@@ -138,7 +195,7 @@ function VisitesEnCours({setError}){
 }
 
 //Renvoi la liste des immeubles
-function Immeubles(){
+const Immeubles = () => {
 
   const [listImmeubles, setListImmeubles] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -157,7 +214,7 @@ function Immeubles(){
 
   if(listImmeubles.length <= 0){
     return(
-      <ul className='max-w-md divide-y divide-gray-200 bg-neutral-800 rounded-md p-2'>
+      <ul className='divide-y divide-gray-200 bg-neutral-800 rounded-md p-2'>
         <li>
           <div className='flex justify-center text-white'>
             <h5>Aucun immeuble</h5>
@@ -167,7 +224,7 @@ function Immeubles(){
     )
   }else{
     return(
-      <ul className='max-w-md divide-y divide-gray-200 bg-neutral-800 rounded-md p-3'>
+      <ul className='divide-y divide-gray-200 bg-neutral-800 rounded-md p-3'>
         {listImmeubles.map((immeuble, index) =>
           <li key={immeuble.code_immeuble} className='pb-3 sm:pb-4 pt-2'>
             <div className='flex items-center space-x-4' onClick={() => childRef.current[index].showDetails() }>
