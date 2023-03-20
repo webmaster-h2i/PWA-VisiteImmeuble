@@ -247,6 +247,20 @@ export async function addSignature(idVisite, signature){
     })
 }
 
+// Api call pour supprimer une signature
+export async function deleteSignature(idVisite, codePersonne){
+    // récupère le token du store
+    const authToken = getCurrentStateFromStore().token.value;
+    return api.request({
+        url: "/visite/"+idVisite+"/signature",
+        method: "DELETE",
+        headers: {
+            'Authorization': `Bearer ${authToken}` 
+        },
+        data: codePersonne
+    })
+}
+
 //--PDF--
 
 // Api call pour récuperer le rapport

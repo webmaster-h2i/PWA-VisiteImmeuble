@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { updateCommentaire, updateDateCloture, getPdf } from "../../services/api/visiteApi";
 import { useSelector } from "react-redux";
 import Loader from "../../components/loader";
@@ -8,14 +8,20 @@ import { fr } from "date-fns/locale";
 import moment from "moment";
 import { NotifyToaster } from '../../components/notifyToast';
 import { useNavigate } from "react-router-dom";
+import { ReactComponent as ArrowRight} from '../../assets/icons/arrowRight.svg';
+import { ReactComponent as ArrowLeft} from '../../assets/icons/arrowLeft.svg';
 registerLocale("fr", fr)
 
 export default function Cloture(){
 
     const [clotureDate, setClotureDate] = useState(new Date());
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const idVisite = useSelector((visite) => visite.visite.visite.idVisite);
     const navigate = useNavigate();
+
+    useEffect(()=>{
+        setLoading(false);
+    },[])
 
     //Update le commentaire (mot du gestionnaire) dès que la textarea n'est plus focus 
     function updateComm(newComm){
@@ -28,63 +34,61 @@ export default function Cloture(){
     }
 
     //Ajoute une date de cloture à la visite et renvoi le rapport
-    function handleCloture(){
+    async function handleCloture(){
         setLoading(true);
         let cloture = [{
             "date_cloture": moment(clotureDate).format("YYYY-MM-DD HH:mm:ss")
         }]
 
         updateDateCloture(idVisite,cloture).then(
-            getPdf(idVisite).then((response) => {
+            await getPdf(idVisite).then((response) => {
                 let file = new Blob([response.data], {type: 'application/pdf'});
                 let fileURL = URL.createObjectURL(file);
                 window.open(fileURL);
-                NotifyToaster(response.message, 'info');
             }).then(
+                setLoading(false),
+                NotifyToaster("Visite terminée", 'info'),
                 navigate('/accueil')
             )
         )
-        setLoading(false);
     }
 
-    if(loading){
-        return(<Loader/>)
-    }else{
-        return(
-            <div>
-                <dialog id="clotureDialog" className="bg-gray-800">
-                    <form method="dialog">
-                        <div className="flex justify-center m-5">
-                            <h3 className="text-lg text-white">Clôture de la visite</h3>
+    if(loading){return(<Loader/>)}
+
+    return(
+        <div>
+            <dialog id="clotureDialog" className="bg-gray-800">
+                <form method="dialog">
+                    <div className="flex justify-center m-5">
+                        <h3 className="text-lg text-white">Clôture de la visite</h3>
+                    </div>
+                    <div className="text-sm text-white m-1 text-justify">
+                        <p>Êtes-vous certain de vouloir clôturer cette visite ?</p>
+                        <p className="mt-2">Il vous sera par la suite impossible d'apporter des modifications à celle-ci.</p>
+                    </div>
+                    <menu>
+                        <div className="flex justify-center mt-12 mr-3 ml-3">
+                            <button className="w-full text-sm text-white  hover:bg-sky-700 rounded-md py-2 px-4 m-1" value="close">Annuler</button>
+                            <button className="w-full text-white text-sm  hover:bg-sky-700 rounded-md py-2 px-4 m-1" onClick={handleCloture}>Clôturer</button>
                         </div>
-                        <div className="text-sm text-white m-1 text-justify">
-                            <p>Êtes-vous certain de vouloir clôturer cette visite ?</p>
-                            <p className="mt-2">Il vous sera par la suite impossible d'apporter des modifications à celle-ci.</p>
-                        </div>
-                        <menu>
-                            <div className="flex justify-center mt-12 mr-3 ml-3">
-                                <button className="w-full text-sm text-white  hover:bg-sky-700 rounded-md py-2 px-4 m-1" value="close">Annuler</button>
-                                <button className="w-full text-white text-sm  hover:bg-sky-700 rounded-md py-2 px-4 m-1" onClick={handleCloture}>Clôturer</button>
-                            </div>
-                        </menu>
-                    </form>
-                </dialog>
-                <div className="flex justify-center m-9">
-                    <h3 className="text-lg text-white">Clôture de la visite</h3>
-                </div>
-                <div className="mt-9">
-                    <DatePickerCloture clotureDate={clotureDate} setClotureDate={setClotureDate}/>
-                </div>
-                <div className="mt-9">
-                    <CommentaireVisite updateComm={updateComm}/>
-                </div>
-                <div className="flex justify-center mt-12 mr-3 ml-3">
-                    <button className="w-full text-white bg-sky-600 hover:bg-sky-700 rounded-md py-2 px-4 m-1" onClick={() => {window.location.href="/signatures"}}>Signatures</button>
-                    <button className="w-full text-white bg-sky-600 hover:bg-sky-700 rounded-md py-2 px-4 m-1" onClick={() => document.getElementById('clotureDialog').showModal()}>Clôturer</button>
-                </div>
+                    </menu>
+                </form>
+            </dialog>
+            <div className="flex justify-center m-9">
+                <h3 className="text-lg text-white">Clôture de la visite</h3>
             </div>
-        )
-    }
+            <div className="mt-9">
+                <DatePickerCloture clotureDate={clotureDate} setClotureDate={setClotureDate}/>
+            </div>
+            <div className="mt-9">
+                <CommentaireVisite updateComm={updateComm}/>
+            </div>
+            <div className="flex justify-center mt-12 mr-3 ml-3">
+                <button className="w-full text-white bg-sky-600 hover:bg-sky-700 rounded-md py-2 px-4 m-1" onClick={() => {window.location.href="/signatures"}}><i><ArrowLeft className="w-5 inline mr-1 mb-1"/></i>Signatures</button>
+                <button className="w-full text-white bg-sky-600 hover:bg-sky-700 rounded-md py-2 px-4 m-1" onClick={() => document.getElementById('clotureDialog').showModal()}>Clôturer<i><ArrowRight className="w-5 inline ml-1 mb-1"/></i></button>
+            </div>
+        </div>
+    )
 }
 
 const DatePickerCloture = ({clotureDate, setClotureDate}) => {

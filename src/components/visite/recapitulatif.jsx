@@ -5,6 +5,8 @@ import { ReactComponent as Pen } from '../../assets/icons/pen.svg';
 import { ReactComponent as Trash } from '../../assets/icons/trash.svg';
 import { ReactComponent as Valid } from '../../assets/icons/valid.svg';
 import { ReactComponent as Stop } from '../../assets/icons/stop.svg';
+import { ReactComponent as ArrowRight} from '../../assets/icons/arrowRight.svg';
+import { ReactComponent as ArrowLeft} from '../../assets/icons/arrowLeft.svg';
 import Loader from '../../components/loader';
 
 export default function Recapitulatif(){
@@ -12,8 +14,9 @@ export default function Recapitulatif(){
     const [listElement, setListELement] = useState([]);
     const idVisite = useSelector((visite) => visite.visite.visite.idVisite);
     const [loading, setLoading] = useState(true);
-    const osDeclarant = getOs();
+    const [osDeclarant, setOsDeclarant] = useState(false);
 
+    //Récupère la liste des élément de la visite
     useEffect(() => {
         getOneVisite(idVisite).then((response) => {
             setListELement(response.data.data.elements)
@@ -21,11 +24,11 @@ export default function Recapitulatif(){
         })
     },[]);
 
-    function getOs(){
-        let os = false;
-        listElement.map((element) => os = element.os_a_planifier === 1 ? true:false);
-        return os;
-    }
+    //Vérifie si l'un des élément a un ordre de service alors il faut ajouter un déclarant
+    useEffect(() => {
+        setOsDeclarant(false)
+        listElement.map((element) => element.os_a_planifier === 1 ? setOsDeclarant(true):'');
+    },[listElement]);
 
     return(
         <div>
@@ -36,8 +39,8 @@ export default function Recapitulatif(){
                 <TableauRecap listElement={listElement} idVisite={idVisite} setLoading={setLoading} loading={loading} setListELement={setListELement}/>
             </div>
             <div className="flex justify-center mt-12 mr-2 ml-2 mb-5">
-                <button className="w-full text-white bg-sky-600 rounded-md py-2 px-4 hover:bg-sky-700 m-1" onClick={() => {window.location.href="/element"}}>Créer un élément</button>
-                <button className="w-full text-white bg-sky-600 rounded-md py-2 px-4 hover:bg-sky-700 m-1" onClick={() => {window.location.href= osDeclarant ? "/declarant":"/signatures"}}>{osDeclarant ? "Déclarant":"Signatures"}</button>
+                <button className="w-full text-white bg-sky-600 rounded-md py-2 px-4 hover:bg-sky-700 m-1" onClick={() => {window.location.href="/element"}}><i><ArrowLeft className="w-5 inline mr-1 mb-1"/></i>Ajout d'élém.</button>
+                <button className="w-full text-white bg-sky-600 rounded-md py-2 px-4 hover:bg-sky-700 m-1" onClick={() => {window.location.href= osDeclarant ? "/declarant":"/signatures"}}>{osDeclarant ? "Déclarant":"Signatures"}<i><ArrowRight className="w-5 inline ml-1 mb-1"/></i></button>
             </div>
         </div>
     )

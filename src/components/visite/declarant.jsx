@@ -2,17 +2,25 @@ import { useEffect, useState } from 'react';
 import { getPersonnes, updateDeclarant } from '../../services/api/visiteApi';
 import { useDispatch, useSelector } from 'react-redux';
 import { setDeclarant } from '../../store/visiteSlice';
+import { NotifyToaster } from '../../components/notifyToast';
+import Loader from '../../components/loader';
+import { ReactComponent as ArrowRight} from '../../assets/icons/arrowRight.svg';
+import { ReactComponent as ArrowLeft} from '../../assets/icons/arrowLeft.svg';
 
 
 export default function SelectImmeuble() {
 
     const [listeDeclarants, setListeDeclarants] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(()=>{
         getPersonnes().then((response) => {
             setListeDeclarants(response.data.data);
+            setLoading(false);
         })
     },[])
+
+    if(loading){return(<Loader/>)}
 
     return (
         <div>
@@ -26,8 +34,8 @@ export default function SelectImmeuble() {
                 <SelectDeclarants listeDeclarants={listeDeclarants}/>
             </div>
             <div className="flex justify-center mt-12 mr-3 ml-3">
-                <button className="w-full text-white bg-sky-600 hover:bg-sky-700 rounded-md py-2 px-4 m-1" onClick={() => {window.location.href="/recap"}}>Récapitulatif</button>
-                <button className="w-full text-white bg-sky-600 hover:bg-sky-700 rounded-md py-2 px-4 m-1" onClick={() => {window.location.href="/signatures"}}>Signatures</button>
+                <button className="w-full text-white bg-sky-600 hover:bg-sky-700 rounded-md py-2 px-4 m-1" onClick={() => {window.location.href="/recap"}}><i><ArrowLeft className="w-5 inline mr-1 mb-1"/></i>Récapitulatif</button>
+                <button className="w-full text-white bg-sky-600 hover:bg-sky-700 rounded-md py-2 px-4 m-1" onClick={() => {window.location.href="/signatures"}}>Signatures<i><ArrowRight className="w-5 inline ml-1 mb-1"/></i></button>
             </div>
         </div>
     );
@@ -40,7 +48,9 @@ const SelectDeclarants = ({listeDeclarants}) => {
 
     const handleSelect = (e) => {
         e.preventDefault();
-        updateDeclarant(idVisite, [{"code_personne":e.target.value}]);
+        updateDeclarant(idVisite, [{"code_personne":e.target.value}]).then((response) => {
+            NotifyToaster(response.data.message, 'info');
+        });
         dispatch(setDeclarant(e.target.value));
     }
 

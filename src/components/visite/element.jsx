@@ -5,6 +5,8 @@ import { setElements, setPhotos } from '../../store/visiteSlice.jsx';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ReactComponent as Cross } from '../../assets/icons/cross.svg';
 import { ReactComponent as CloudUp } from '../../assets/icons/cloudUp.svg';
+import { ReactComponent as ArrowRight} from '../../assets/icons/arrowRight.svg';
+import { ReactComponent as ArrowLeft} from '../../assets/icons/arrowLeft.svg';
 import { NotifyToaster } from '../../components/notifyToast';
 
 
@@ -65,7 +67,7 @@ export default function Element(){
         addElement(idVisite,element).then((response) => {
             NotifyToaster(response.data.message, 'info');
             if(response.status === 200 || response.status === 201){
-                photosB64.length > 0 ? addPhoto(idVisite,photos).then((response) => NotifyToaster(response.data.message, 'info'),navigate('/recap')):navigate('/recap');    
+                photosB64.length > 0 ? addPhoto(idVisite,photos).then(navigate('/recap')):navigate('/recap');    
             } 
         })
     }
@@ -91,8 +93,11 @@ export default function Element(){
                 <UploadPhoto listPhoto={listPhoto} setListPhoto={setListPhoto} selectedSecteur={selectedSecteur} selectedComposant={selectedComposant} idVisite={idVisite}/>
             </div>
             <div className="flex justify-center mt-7 mr-2 ml-2 mb-5">
-                <button className="w-full text-white bg-sky-600 hover:bg-sky-700 rounded-md py-2 px-4 m-1" onClick={handleCreateElement}>{secteurParam && composantParam ? "Modifier":"Créer"}</button>
-                <button className="w-full text-white bg-sky-600 hover:bg-sky-700 rounded-md py-2 px-4 m-1" onClick={() => {window.location.href="/recap"}}>Récapitulatif</button>
+                <button className="w-full text-white bg-orange-600 hover:bg-sky-700 rounded-md py-2 px-4 m-3" onClick={handleCreateElement}>{secteurParam && composantParam ? "Modifier":"Ajouter"}</button>
+            </div>
+            <div className="flex justify-center mt-7 mr-2 ml-2 mb-5">
+                <button className="w-full text-white bg-sky-600 hover:bg-sky-700 rounded-md py-2 px-4 m-1" onClick={() => {window.location.href="/info/"+idVisite}}><i><ArrowLeft className="w-5 inline mr-1 mb-1"/></i>Info. générale</button>
+                <button className="w-full text-white bg-sky-600 hover:bg-sky-700 rounded-md py-2 px-4 m-1" onClick={() => {window.location.href="/recap"}}>Récapitulatif<i><ArrowRight className="w-5 inline ml-1 mb-1"/></i></button>
             </div>
         </div>
     )
