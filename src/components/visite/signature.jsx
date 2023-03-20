@@ -3,7 +3,8 @@ import { useSelector } from 'react-redux';
 import { useState, useEffect } from 'react';
 import Loader from '../loader';
 import { addSignature } from '../../services/api/visiteApi';
-import SignatureCanvas from 'react-signature-canvas'
+import SignatureCanvas from 'react-signature-canvas';
+import { NotifyToaster } from '../../components/notifyToast';
 import { useRef } from 'react';
 
 export default function ListeSignature(){
@@ -22,8 +23,6 @@ export default function ListeSignature(){
             setListePersonne(persList)
             setLoading(false)
         })
-
-        console.log(listePersonne)
     },[]);
 
     //Ouvre la modal de dialogue lors de la clôture
@@ -38,13 +37,17 @@ export default function ListeSignature(){
     }else{
         return(
             <div>
-                <SignaturePad idVisite={idVisite} signatureDialog={signatureDialog} personneSelected={personneSelected}/>
+                <SignaturePad idVisite={idVisite} signatureDialog={signatureDialog} personneSelected={personneSelected} setLoading={setLoading}/>
                 <div className="flex justify-center m-9">
                     <h3 className="text-lg text-white">Signature</h3>
                 </div>
-                {listePersonne.map((pers, index) =>
+                {listePersonne.map((pers, index) => 
+                    !pers.signature ?
                     <div key={index} className="flex justify-center mr-5 ml-5 mt-4">
-                        <button className="w-full text-white bg-orange-600 rounded-md py-2 px-4" onClick={() => openAlert(pers)}>{pers.nom}</button>
+                        <button className={"w-full text-white bg-orange-600 rounded-md py-2 px-4"} onClick={() => openAlert(pers)}>{pers.nom}</button>
+                    </div>:
+                    <div key={index} className="flex justify-center mr-5 ml-5 mt-4">
+                        <button className={"w-full text-white bg-gray-700 rounded-md py-2 px-4"} onClick={() => openAlert(pers)}>{pers.nom}</button>
                     </div>
                 )}
                 <div className="flex justify-center mr-5 ml-5 mt-4">
@@ -59,20 +62,22 @@ export default function ListeSignature(){
     }
 }
 
-const SignaturePad = ({idVisite, signatureDialog, personneSelected}) => {
+//Bloc de signature utilisant la librairie react-signature-canvas
+const SignaturePad = ({idVisite, signatureDialog, personneSelected, setLoading}) => {
 
     const sigPad = useRef('');
 
     function handleAddSignature(){
 
+        setLoading(true);
         let signatureImage = sigPad.current.getTrimmedCanvas().toDataURL('image/png');
         let signature = [{
             "personne": personneSelected,
             "signature": signatureImage
         }]
-
         addSignature(idVisite,signature).then((response) => {
-            console.log(response);
+            NotifyToaster(response.data.message,'info');
+            setLoading(false);
         })
     }
 

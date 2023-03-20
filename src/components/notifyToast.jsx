@@ -1,12 +1,11 @@
-import { useEffect } from 'react';
-import { toast } from 'react-toastify';
+import { toast, Slide } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 
 export const NotifyToaster = (message, type) => {
 
     switch(type){
-        case "success":
-            toast.success(message, {
+        case "info":
+            toast.info(message, {
                 position: "top-right",
                 autoClose: 3000,
                 hideProgressBar: false,
@@ -14,7 +13,8 @@ export const NotifyToaster = (message, type) => {
                 pauseOnHover: true,
                 draggable: true,
                 progress: undefined,
-                theme: "dark",
+                theme: "colored",
+                transition: Slide
             });
             break;
         default: 

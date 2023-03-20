@@ -6,6 +6,7 @@ import DatePicker from "react-datepicker";
 import { registerLocale } from  "react-datepicker";
 import { fr } from "date-fns/locale";
 import moment from "moment";
+import { NotifyToaster } from '../../components/notifyToast';
 import { useNavigate } from "react-router-dom";
 registerLocale("fr", fr)
 
@@ -38,6 +39,7 @@ export default function Cloture(){
                 let file = new Blob([response.data], {type: 'application/pdf'});
                 let fileURL = URL.createObjectURL(file);
                 window.open(fileURL);
+                NotifyToaster(response.message, 'info');
             }).then(
                 navigate('/accueil')
             )

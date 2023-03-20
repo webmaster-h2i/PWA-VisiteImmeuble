@@ -74,7 +74,7 @@ const SelectImmeuble = ({selectImmeubleDialog}) => {
     const handleclick = (e) => {
         e.preventDefault();
         if(selectedImmeuble){
-            NotifyToaster('Début de la visite', 'success');
+            NotifyToaster('Début de la visite', 'info');
             navigate('/info');
         }
     }

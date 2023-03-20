@@ -5,6 +5,8 @@ import { setElements, setPhotos } from '../../store/visiteSlice.jsx';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ReactComponent as Cross } from '../../assets/icons/cross.svg';
 import { ReactComponent as CloudUp } from '../../assets/icons/cloudUp.svg';
+import { NotifyToaster } from '../../components/notifyToast';
+
 
 export default function Element(){
 
@@ -61,8 +63,9 @@ export default function Element(){
         dispatch(setPhotos(photos));
 
         addElement(idVisite,element).then((response) => {
+            NotifyToaster(response.data.message, 'info');
             if(response.status === 200 || response.status === 201){
-                photosB64.length > 0 ? addPhoto(idVisite,photos).then(navigate('/recap')):navigate('/recap');    
+                photosB64.length > 0 ? addPhoto(idVisite,photos).then((response) => NotifyToaster(response.data.message, 'info'),navigate('/recap')):navigate('/recap');    
             } 
         })
     }
@@ -85,7 +88,7 @@ export default function Element(){
                 <Commentaire commentaire={commentaire} setCommentaire={setCommentaire}/>
             </div>
             <div className="mt-7">
-                <UploadPhoto listPhoto={listPhoto} setListPhoto={setListPhoto} selectedSecteur={selectedSecteur} selectedComposant={selectedComposant} isOnUpdate={isOnUpdate} idVisite={idVisite}/>
+                <UploadPhoto listPhoto={listPhoto} setListPhoto={setListPhoto} selectedSecteur={selectedSecteur} selectedComposant={selectedComposant} idVisite={idVisite}/>
             </div>
             <div className="flex justify-center mt-7 mr-2 ml-2 mb-5">
                 <button className="w-full text-white bg-sky-600 hover:bg-sky-700 rounded-md py-2 px-4 m-1" onClick={handleCreateElement}>{secteurParam && composantParam ? "Modifier":"Créer"}</button>

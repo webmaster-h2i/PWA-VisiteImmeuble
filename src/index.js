@@ -19,7 +19,7 @@ root.render(
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <Navbar/>
-        <ToastContainer/>
+        <ToastContainer className="text-sm"/>
         <RouterProvider router={router} basename="/" />
       </PersistGate>
     </Provider>

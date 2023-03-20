@@ -8,7 +8,7 @@ import { getPersonnes, addVisite, getOneVisite, updateVisite } from '../../servi
 import { useSelector, useDispatch } from 'react-redux';
 import { setIdVisite, setinfoGenerales, setVisite } from "../../store/visiteSlice.jsx";
 import { useNavigate, useParams } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { NotifyToaster } from '../../components/notifyToast';
 import moment from "moment";
 registerLocale('fr', fr)
 
@@ -86,12 +86,14 @@ export default function InfoGenerale(){
 
         //Si l'id de la visite est présent en paramètre alors on modifie la visite sinon on la créé
         if(visiteIdParam){
-            updateVisite(visiteIdParam,visite).then(() => {
+            updateVisite(visiteIdParam,visite).then((response) => {
+                NotifyToaster(response.data.message, 'info');
                 dispatch(setinfoGenerales(visite));
                 navigate("/recap");
             })
         }else{
             addVisite(visite).then((response) => {
+                NotifyToaster(response.data.message, 'info');
                 dispatch(setIdVisite(response.data.data.id));
                 dispatch(setinfoGenerales(visite));
                 navigate("/element");
