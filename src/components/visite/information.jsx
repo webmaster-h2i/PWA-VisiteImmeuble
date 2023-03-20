@@ -9,6 +9,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setIdVisite, setinfoGenerales, setVisite } from "../../store/visiteSlice.jsx";
 import { useNavigate, useParams } from 'react-router-dom';
 import { NotifyToaster } from '../../components/notifyToast';
+import { ReactComponent as ArrowRight} from '../../assets/icons/arrowRight.svg';
 import moment from "moment";
 registerLocale('fr', fr)
 
@@ -89,7 +90,7 @@ export default function InfoGenerale(){
             updateVisite(visiteIdParam,visite).then((response) => {
                 NotifyToaster(response.data.message, 'info');
                 dispatch(setinfoGenerales(visite));
-                navigate("/recap");
+                navigate("/element");
             })
         }else{
             addVisite(visite).then((response) => {
@@ -119,7 +120,7 @@ export default function InfoGenerale(){
                 <ObjetVisite setObjetVisite={setObjetVisite} objetVisite={objetVisite}/>
             </div>
             <div className="flex justify-center mt-9 mr-2 ml-2 mb-5">
-                <button className="w-full text-white bg-sky-600 rounded-md py-2 px-4 hover:bg-sky-700" onClick={handleCreateVisite}>Ajout d'élément</button>
+                <button className="w-full text-white bg-sky-600 rounded-md py-2 px-4 hover:bg-sky-700" onClick={handleCreateVisite}>Ajout d'élément<i><ArrowRight className="w-5 inline ml-1 mb-1"/></i></button>
             </div>
         </div>
     )
