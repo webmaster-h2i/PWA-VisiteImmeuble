@@ -2,16 +2,15 @@ import { createBrowserRouter } from 'react-router-dom';
 import BasicErrorPage from '../components/basicErrorPage';
 import Home from '../components/home';
 import Login from '../components/loginForm';
-import SelectImmeuble from '../components/visite/selectImmeuble';
 import LogOut from '../components/logOut';
 import { ProtectedRoute } from "./protectedRoute";
 import { RedirectHome } from "./redirectToHome";
-import InfoGenerale from '../components/visite/infoGenerale';
+import InfoGenerale from '../components/visite/information';
 import Element from '../components/visite/element';
 import Recapitulatif from '../components/visite/recapitulatif';
-import Signature from '../components/visite/signature';
-import ListeSignature from '../components/visite/listeSignature';
+import ListeSignature from '../components/visite/signature';
 import Cloture from '../components/visite/cloture';
+import Declarant from '../components/visite/declarant';
 
 const router = createBrowserRouter([
     {
@@ -30,17 +29,12 @@ const router = createBrowserRouter([
       errorElement: <BasicErrorPage />,
     },
     {
-      path: "/visite",
-      element: <ProtectedRoute><SelectImmeuble /></ProtectedRoute>,
-      errorElement: <BasicErrorPage />,
-    },
-    {
       path: "/info/:visiteIdParam?",
       element: <ProtectedRoute><InfoGenerale /></ProtectedRoute>,
       errorElement: <BasicErrorPage />,
     },
     {
-      path: "/element",
+      path: "/element/:secteurParam?/:composantParam?",
       element: <ProtectedRoute><Element /></ProtectedRoute>,
       errorElement: <BasicErrorPage />,
     },
@@ -55,13 +49,13 @@ const router = createBrowserRouter([
       errorElement: <BasicErrorPage />,
     },
     {
-      path: "/signature/:nomPersonne",
-      element: <ProtectedRoute><Signature /></ProtectedRoute>,
+      path: "/cloture",
+      element: <ProtectedRoute><Cloture /></ProtectedRoute>,
       errorElement: <BasicErrorPage />,
     },
     {
-      path: "/cloture",
-      element: <ProtectedRoute><Cloture /></ProtectedRoute>,
+      path: "/declarant",
+      element: <ProtectedRoute><Declarant /></ProtectedRoute>,
       errorElement: <BasicErrorPage />,
     }
 ]);

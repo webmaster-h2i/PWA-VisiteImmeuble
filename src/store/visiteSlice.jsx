@@ -4,9 +4,10 @@ const initialState = {
     visite: {
         immeuble:'',
         idVisite:'',
-        elements: [],
-        photos: [],
-        info: []
+        elements:[],
+        photos:[],
+        info:[],
+        declarant:'' 
     },
 }
 
@@ -31,10 +32,12 @@ const visiteReducer = createSlice({
         },
         setinfoGenerales: (state, action) => {
             state.visite.info = action.payload
+        },
+        setDeclarant: (state, action) => {
+            state.visite.declarant = action.payload
         }
     }
 })
 
-export const { setImmeuble, setIdVisite, setElements, setPhotos, setinfoGenerales, setVisite } = visiteReducer.actions
-export const immeubleVisite = (state) => state.visite.value
+export const { setImmeuble, setIdVisite, setElements, setPhotos, setinfoGenerales, setVisite, setDeclarant } = visiteReducer.actions
 export default visiteReducer.reducer

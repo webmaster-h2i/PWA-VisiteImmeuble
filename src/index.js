@@ -10,6 +10,7 @@ import store from './store/store';
 import { persistStore } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';
 import Navbar from './components/navBar';
+import { ToastContainer } from 'react-toastify';
 
 const persistor = persistStore(store);
 
@@ -18,6 +19,7 @@ root.render(
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <Navbar/>
+        <ToastContainer className="text-sm"/>
         <RouterProvider router={router} basename="/" />
       </PersistGate>
     </Provider>
