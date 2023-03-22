@@ -1,5 +1,12 @@
 == Changelog ==
 
+0.23 - 22/03/2023
+
+updated
+
+- Pas de redirection vers récap après l'ajout d'un élément
+- Signature non modifiable 
+
 0.21 - 13/03/2023
 
 added

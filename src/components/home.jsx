@@ -85,7 +85,7 @@ const SelectImmeuble = ({selectImmeubleDialog}) => {
             <form method="dialog">
                 <div className="m-2">
                   <div className="mt-9">
-                    <label htmlFor="immeubles" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Selectionner un immeuble</label>
+                    <label htmlFor="immeubles" className="block mb-2 text-sm font-medium text-white">Selectionner un immeuble</label>
                     <select id="immeubles" onChange={handleSelect} className="w-full max-w-md border text-sm rounded-lg focus:ring-orange-600 focus:border-orange-600 p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white">
                         <option defaultValue></option>
                         {listImmeubles.map(immeuble => <option className="text-lg" value={immeuble.code_immeuble} key={immeuble.code_immeuble}>{immeuble.code_immeuble} - {immeuble.nom}</option>)}

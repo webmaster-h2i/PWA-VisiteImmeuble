@@ -8,6 +8,7 @@ import { ReactComponent as CloudUp } from '../../assets/icons/cloudUp.svg';
 import { ReactComponent as ArrowRight} from '../../assets/icons/arrowRight.svg';
 import { ReactComponent as ArrowLeft} from '../../assets/icons/arrowLeft.svg';
 import { NotifyToaster } from '../../components/notifyToast';
+import Loader from '../../components/loader';
 
 
 export default function Element(){
@@ -21,6 +22,7 @@ export default function Element(){
     const [listComposants, setListComposants] = useState([]);
     const [selectedComposant, setSelectedComposant] = useState('');
     const [listPhoto, setListPhoto] = useState([]);
+    const [loading, setLoading] = useState(true);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     let {secteurParam} = useParams();
@@ -38,10 +40,11 @@ export default function Element(){
                 setListPhoto(response.data.data.photos)
             })
         }
+        setLoading(false);
     },[])
 
     //Récupère et formate l'élément et les photos et fait le call API
-    function handleCreateElement(){
+    async function handleCreateElement(){
 
         let element = [{
             "secteur_id": selectedSecteur,
@@ -64,18 +67,30 @@ export default function Element(){
         dispatch(setElements(element));
         dispatch(setPhotos(photos));
 
-        addElement(idVisite,element).then((response) => {
+        setLoading(true);
+        await addElement(idVisite,element).then((response) => {
+            photosB64.length > 0 ? addPhoto(idVisite,photos).then(clearFields()):navigate(clearFields());     
             NotifyToaster(response.data.message, 'info');
-            if(response.status === 200 || response.status === 201){
-                photosB64.length > 0 ? addPhoto(idVisite,photos).then(navigate('/recap')):navigate('/recap');    
-            } 
+            
+            setLoading(false);
         })
     }
+
+    function clearFields(){
+        setCheckConforme('Non');
+        setCheckOs('Non');
+        setCommentaire('');
+        setSelectedSecteur('');
+        setSelectedComposant('');
+        setListPhoto([])
+    }
+
+    if(loading){return(<Loader/>)}
 
     return(
         <div>
             <div className="flex justify-center m-9">
-                <h3 className="text-lg text-white">Ajouter un élément</h3>
+                <h3 className="text-lg text-white">{isOnUpdate ? "Modifier":"Ajouter"} un élément</h3>
             </div>
             <div className="mt-8">
                 <SelectSecteurs listSecteurs={listSecteurs} setListSecteurs={setListSecteurs} setSelectedSecteur={setSelectedSecteur} selectedSecteur={selectedSecteur}/>
@@ -118,8 +133,8 @@ const SelectSecteurs = ({listSecteurs, setListSecteurs, setSelectedSecteur, sele
 
     return(
         <div className="mt-9 mr-3 ml-3 mb-3">
-            <label htmlFor="Secteur" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Parties communes</label>
-            <select value={selectedSecteur} onChange={handleSelect} id="Secteur" className="border text-sm rounded-lg focus:ring-orange-600 focus:border-orange-600 block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white">
+            <label htmlFor="Secteur" className="block mb-2 text-sm font-medium text-white">Parties communes</label>
+            <select value={selectedSecteur} onChange={handleSelect} id="Secteur" className="border text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white">
                 <option defaultValue></option>
                 {listSecteurs.map(secteur => <option className="text-lg" value={secteur.id} key={secteur.id}>{secteur.nom}</option>)}
             </select>
@@ -142,8 +157,8 @@ const SelectComposants = ({listComposants, setListComposants, setSelectedComposa
 
     return(
         <div className="mt-9 mr-3 ml-3 mb-3">
-            <label htmlFor="composants" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Composant</label>
-            <select value={selectedComposant} onChange={handleSelect} id="composants" className="border text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-orange-600 focus:border-orange-600">
+            <label htmlFor="composants" className="block mb-2 text-sm font-medium text-white">Composant</label>
+            <select value={selectedComposant} onChange={handleSelect} id="composants" className="border text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white">
                 <option defaultValue></option>
                 { selectedSecteur ? listComposants.map(composant => <option className="text-lg" value={composant.id} key={composant.id}>{composant.nom}</option>): ''}
             </select>
@@ -160,13 +175,13 @@ const CheckBoxes = ({checkConforme,setCheckConforme,checkOs,setCheckOs}) => {
         <div className="m-3">
             <label className="relative inline-flex items-center cursor-pointer">
                 <input checked={checkedConforme} onChange={(conf) => conf.target.checked ? setCheckConforme('Oui'):setCheckConforme('Non')} type="checkbox" value="" className="sr-only peer" />
-                <div className="w-10 h-5 rounded-full dark:bg-gray-700 peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all border-gray-600 peer-checked:bg-orange-600"></div>
-                <span className="ml-3 text-xs font-medium text-gray-900 dark:text-gray-300">Conforme: {checkConforme}</span>
+                <div className="w-10 h-5 rounded-full bg-gray-700 peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all border-gray-600 peer-checked:bg-orange-600"></div>
+                <span className="ml-3 text-xs font-medium text-gray-300">Conforme: {checkConforme}</span>
                 </label>
                 <label className="relative inline-flex items-center cursor-pointer ml-5">
                 <input checked={checkedOs} onChange={(os) => os.target.checked ? setCheckOs('Oui'):setCheckOs('Non')} type="checkbox" value="" className="sr-only peer" />
-                <div className="w-10 h-5 rounded-full dark:bg-gray-700 peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all border-gray-600 peer-checked:bg-orange-600"></div>
-                <span className="ml-3 text-xs font-medium text-gray-900 dark:text-gray-300">Nécessite OS: {checkOs}</span>
+                <div className="w-10 h-5 rounded-full bg-gray-700 peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all border-gray-600 peer-checked:bg-orange-600"></div>
+                <span className="ml-3 text-xs font-medium text-gray-300">Nécessite OS: {checkOs}</span>
             </label>
         </div>
     )
@@ -213,7 +228,7 @@ const UploadPhoto = ({listPhoto, setListPhoto, selectedSecteur, selectedComposan
                         <label htmlFor="dropzone-file" className="flex flex-col m-2 p-5 items-center justify-center w-full border-2 border-dashed rounded-lg cursor-pointer  hover:bg-bray-800 bg-gray-700  border-gray-600 hover:border-gray-500 hover:bg-gray-600">
                             <div className="flex flex-col items-center justify-center">
                                 <CloudUp className="w-9 text-orange-500"/>
-                                <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">Ajouter une photo</p>
+                                <p className="mb-2 text-sm text-gray-400">Ajouter une photo</p>
                             </div>
                             <input id="dropzone-file" type="file" className="hidden" onChange={(file) => handleFileUpload(file.target.files)}/>
                         </label>

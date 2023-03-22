@@ -6,7 +6,7 @@ import { fr } from 'date-fns/locale';
 import CreatableSelect from 'react-select/creatable';
 import { getPersonnes, addVisite, getOneVisite, updateVisite } from '../../services/api/visiteApi';
 import { useSelector, useDispatch } from 'react-redux';
-import { setIdVisite, setinfoGenerales, setVisite } from "../../store/visiteSlice.jsx";
+import { setIdVisite, setinfoGenerales, setVisite, setAuthSignature} from "../../store/visiteSlice.jsx";
 import { useNavigate, useParams } from 'react-router-dom';
 import { NotifyToaster } from '../../components/notifyToast';
 import { ReactComponent as ArrowRight} from '../../assets/icons/arrowRight.svg';
@@ -56,7 +56,8 @@ export default function InfoGenerale(){
                 "idVisite": visiteIdParam,
                 "elements": response.data.data.elements,
                 "photos": [],
-                "info": formatObjectInfo()
+                "info": formatObjectInfo(),
+                "authSignature": null
             }))    
         });
     }
@@ -84,6 +85,9 @@ export default function InfoGenerale(){
     function handleCreateVisite(){
 
         let visite = formatObjectInfo();
+
+        //On reset la signature du gestionnaire authentifié 
+        dispatch(setAuthSignature(null));
 
         //Si l'id de la visite est présent en paramètre alors on modifie la visite sinon on la créé
         if(visiteIdParam){
@@ -133,8 +137,8 @@ const Contractuelle = ({setContractuelle, contractuelle}) => {
         <div className="m-3">
             <label className="relative inline-flex items-center cursor-pointer">
                 <input type="checkbox" value="" className="sr-only peer" checked={checked} onChange={(contr) => contr.target.checked ? setContractuelle('Oui'):setContractuelle('Non')}/>
-                <div className="w-10 h-5 rounded-full dark:bg-gray-700 peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all border-gray-600 peer-checked:bg-orange-600"></div>
-                <span className="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">Visite contractuelle: {contractuelle}</span>
+                <div className="w-10 h-5 rounded-full bg-gray-700 peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all border-gray-600 peer-checked:bg-orange-600"></div>
+                <span className="ml-3 text-sm font-medium text-gray-300">Visite contractuelle: {contractuelle}</span>
             </label>
         </div>
     )
@@ -143,8 +147,8 @@ const Contractuelle = ({setContractuelle, contractuelle}) => {
 const ObjetVisite = ({setObjetVisite, objetVisite}) => {
     return(
         <div className="mt-9 mr-3 ml-3 mb-3">
-            <label htmlFor="objetvisite" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Objet de la visite *</label>
-            <textarea id="objetvisite" rows="4" className="block p-2.5 w-full text-sm rounded-lg bg-gray-700  placeholder-gray-400 text-white " placeholder="visite contractuelle" onChange={(objt) => setObjetVisite(objt.target.value)} defaultValue={objetVisite}></textarea>
+            <label htmlFor="objetvisite" className="block mb-2 text-sm font-medium text-white">Objet de la visite *</label>
+            <textarea id="objetvisite" rows="4" className="block p-2.5 w-full text-sm rounded-lg bg-gray-700  placeholder-gray-400 text-white focus:ring-orange-600" placeholder="visite contractuelle" onChange={(objt) => setObjetVisite(objt.target.value)} defaultValue={objetVisite}></textarea>
         </div>
     )
 }
