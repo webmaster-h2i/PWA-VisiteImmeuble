@@ -1,13 +1,14 @@
 import { getOneVisite } from '../../services/api/visiteApi';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useState, useEffect } from 'react';
 import Loader from '../loader';
-import { addSignature, deleteSignature } from '../../services/api/visiteApi';
+import { addSignature } from '../../services/api/visiteApi';
 import SignatureCanvas from 'react-signature-canvas';
 import { NotifyToaster } from '../../components/notifyToast';
 import { useRef } from 'react';
 import { ReactComponent as ArrowRight} from '../../assets/icons/arrowRight.svg';
 import { ReactComponent as ArrowLeft} from '../../assets/icons/arrowLeft.svg';
+import { setAuthSignature } from "../../store/visiteSlice.jsx";
 
 export default function ListeSignature(){
 
@@ -15,6 +16,7 @@ export default function ListeSignature(){
     const [loading, setLoading] = useState(true);
     const [personneSelected, setPersonneSelected] = useState(null);
     const idVisite = useSelector((visite) => visite.visite.visite.idVisite);
+    const authSignature = useSelector((visite) => visite.visite.visite.authSignature);
     const userInfo = useSelector((user) => user.token.user);
     const signatureDialog = useRef('');
    
@@ -22,63 +24,74 @@ export default function ListeSignature(){
         //Récupère les data de la visite, dont les participants
         getOneVisite(idVisite).then((response) => {
             setListePersonne(response.data.data.personnes)
-            setLoading(false)
+            //On format les data du gestionnaire connecté pour pouvoir l'ajouter à la liste des participants
+            let gestionnaire = {
+                "nom": userInfo.name,
+                "details": {
+                    "code_personne": "AuthPersonne"
+                },
+                "signature": authSignature
+            }
+            //Ajoute le gestionnaire connecté à la liste des personnes afin qu'il puisse signer
+            setListePersonne(personnes => [...personnes, gestionnaire]);
+            setLoading(false);
         })
-    },[idVisite]);
+    },[]);
 
     //Ouvre la modal de dialogue lors de la clôture
     function openAlert(pers){
-        let persSelect = { "code":pers.details !== null ? pers.details.code_personne: pers.nom, "signature":pers.signature}; 
+        let persSelect = { "code":pers.details !== null ? pers.details.code_personne: pers.nom, "nom": pers.nom }; 
         setPersonneSelected(persSelect);
         signatureDialog.current.showModal();
     }
 
-    if(loading){
-        return(<Loader/>)
-    }else{
-        return(
-            <div>
-                <SignaturePad idVisite={idVisite} signatureDialog={signatureDialog} personneSelected={personneSelected} setLoading={setLoading}/>
-                <div className="flex justify-center m-9">
-                    <h3 className="text-lg text-white">Signature</h3>
-                </div>
-                {listePersonne.map((pers, index) => 
-                    <div key={index} className="flex justify-center mr-5 ml-5 mt-4">
-                        <button className={"w-full text-white bg-orange-600 rounded-md py-2 px-4"} onClick={() => openAlert(pers)}>{pers.nom}</button>
-                    </div>
-                )}
-                <div className="flex justify-center mr-5 ml-5 mt-4">
-                    <button className="w-full text-white bg-orange-600 rounded-md py-2 px-4" onClick={() => openAlert({'nom': 'AuthPersonne', 'details': null})}>{userInfo.name}</button>
-                </div>
-                <div className="flex justify-center mt-12 mr-3 ml-3">
-                    <button className="w-full text-white bg-sky-600 hover:bg-sky-700 rounded-md py-2 px-4 m-1" onClick={() => {window.location.href="/recap"}}><i><ArrowLeft className="w-5 inline mr-1 mb-1"/></i>Récapitulatif</button>
-                    <button className="w-full text-white bg-sky-600 hover:bg-sky-700 rounded-md py-2 px-4 m-1" onClick={() => {window.location.href="/cloture"}}>Clôture<i><ArrowRight className="w-5 inline ml-1 mb-1"/></i></button>
-                </div>
+    if(loading){return(<Loader/>)}
+
+    return(
+        <div>
+            <SignaturePad idVisite={idVisite} signatureDialog={signatureDialog} listePersonne={listePersonne} setListePersonne={setListePersonne} personneSelected={personneSelected} setLoading={setLoading}/>
+            <div className="flex justify-center m-9">
+                <h3 className="text-lg text-white">Signature</h3>
             </div>
-        )
-    }
+            {listePersonne.map((pers, index) => 
+                <div key={index} className="flex justify-center mr-5 ml-5 mt-4" >
+                    <button className={pers.signature ? "w-full text-white bg-gray-600 rounded-md py-2 px-4":"w-full text-white bg-orange-600 rounded-md py-2 px-4"} onClick={() => openAlert(pers)} disabled={ pers.signature ? true:false}>{pers.nom}</button>
+                </div>
+            )}
+            <div className="flex justify-center mt-12 mr-3 ml-3">
+                <button className="w-full text-white bg-sky-600 hover:bg-sky-700 rounded-md py-2 px-4 m-1" onClick={() => {window.location.href="/recap"}}><i><ArrowLeft className="w-5 inline mr-1 mb-1"/></i>Récapitulatif</button>
+                <button className="w-full text-white bg-sky-600 hover:bg-sky-700 rounded-md py-2 px-4 m-1" onClick={() => {window.location.href="/cloture"}}>Clôture<i><ArrowRight className="w-5 inline ml-1 mb-1"/></i></button>
+            </div>
+        </div>
+    )
 }
 
 //Bloc de signature utilisant la librairie react-signature-canvas
-const SignaturePad = ({idVisite, signatureDialog, personneSelected, setLoading}) => {
+const SignaturePad = ({idVisite, signatureDialog, listePersonne, personneSelected, setLoading}) => {
 
     //Objet signature
     const sigPad = useRef('');
+    const dispatch = useDispatch();
 
     //Récupère la signature, formatage et envoi à l'API
     async function handleAddSignature(){
 
         setLoading(true);
+
+        //Si la personne a signer on set à true le champ signature pour l'empêcher de modifier sa signature par la suite
+        listePersonne.map(pers => (pers.nom === personneSelected.nom ? pers.signature = true:''));
+
+        if(personneSelected.code === "AuthPersonne") dispatch(setAuthSignature(setAuthSignature(true)));
+
+        //Récupération de la signature et formatage des datas 
         let signatureImage = sigPad.current.getTrimmedCanvas().toDataURL('image/png');
         let signature = [{
             "personne": personneSelected.code,
             "signature": signatureImage
         }]
 
-        if(personneSelected.signature || personneSelected.code === 'AuthPersonne'){
-           await deleteSignature(idVisite, [{"personne": personneSelected.code}])
-        }
-        addSignature(idVisite,signature).then((response) => {
+       //Appel API pour ajouter la signature 
+       addSignature(idVisite,signature).then((response) => {
             NotifyToaster(response.data.message,'info');
             setLoading(false);
         })

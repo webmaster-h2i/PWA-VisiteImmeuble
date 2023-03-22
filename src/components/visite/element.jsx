@@ -8,6 +8,7 @@ import { ReactComponent as CloudUp } from '../../assets/icons/cloudUp.svg';
 import { ReactComponent as ArrowRight} from '../../assets/icons/arrowRight.svg';
 import { ReactComponent as ArrowLeft} from '../../assets/icons/arrowLeft.svg';
 import { NotifyToaster } from '../../components/notifyToast';
+import Loader from '../../components/loader';
 
 
 export default function Element(){
@@ -21,6 +22,7 @@ export default function Element(){
     const [listComposants, setListComposants] = useState([]);
     const [selectedComposant, setSelectedComposant] = useState('');
     const [listPhoto, setListPhoto] = useState([]);
+    const [loading, setLoading] = useState(true);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     let {secteurParam} = useParams();
@@ -38,10 +40,11 @@ export default function Element(){
                 setListPhoto(response.data.data.photos)
             })
         }
+        setLoading(false);
     },[])
 
     //Récupère et formate l'élément et les photos et fait le call API
-    function handleCreateElement(){
+    async function handleCreateElement(){
 
         let element = [{
             "secteur_id": selectedSecteur,
@@ -64,18 +67,20 @@ export default function Element(){
         dispatch(setElements(element));
         dispatch(setPhotos(photos));
 
-        addElement(idVisite,element).then((response) => {
+        setLoading(true);
+        await addElement(idVisite,element).then((response) => {
+            photosB64.length > 0 ? addPhoto(idVisite,photos).then(navigate("/recap")):navigate("/recap");     
             NotifyToaster(response.data.message, 'info');
-            if(response.status === 200 || response.status === 201){
-                photosB64.length > 0 ? addPhoto(idVisite,photos).then(navigate('/recap')):navigate('/recap');    
-            } 
+            setLoading(false);
         })
     }
+
+    if(loading){return(<Loader/>)}
 
     return(
         <div>
             <div className="flex justify-center m-9">
-                <h3 className="text-lg text-white">Ajouter un élément</h3>
+                <h3 className="text-lg text-white">{isOnUpdate ? "Modifier":"Ajouter"} un élément</h3>
             </div>
             <div className="mt-8">
                 <SelectSecteurs listSecteurs={listSecteurs} setListSecteurs={setListSecteurs} setSelectedSecteur={setSelectedSecteur} selectedSecteur={selectedSecteur}/>
@@ -119,7 +124,7 @@ const SelectSecteurs = ({listSecteurs, setListSecteurs, setSelectedSecteur, sele
     return(
         <div className="mt-9 mr-3 ml-3 mb-3">
             <label htmlFor="Secteur" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Parties communes</label>
-            <select value={selectedSecteur} onChange={handleSelect} id="Secteur" className="border text-sm rounded-lg focus:ring-orange-600 focus:border-orange-600 block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white">
+            <select value={selectedSecteur} onChange={handleSelect} id="Secteur" className="border text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white">
                 <option defaultValue></option>
                 {listSecteurs.map(secteur => <option className="text-lg" value={secteur.id} key={secteur.id}>{secteur.nom}</option>)}
             </select>
@@ -143,7 +148,7 @@ const SelectComposants = ({listComposants, setListComposants, setSelectedComposa
     return(
         <div className="mt-9 mr-3 ml-3 mb-3">
             <label htmlFor="composants" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Composant</label>
-            <select value={selectedComposant} onChange={handleSelect} id="composants" className="border text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-orange-600 focus:border-orange-600">
+            <select value={selectedComposant} onChange={handleSelect} id="composants" className="border text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white">
                 <option defaultValue></option>
                 { selectedSecteur ? listComposants.map(composant => <option className="text-lg" value={composant.id} key={composant.id}>{composant.nom}</option>): ''}
             </select>
