@@ -137,8 +137,8 @@ const Contractuelle = ({setContractuelle, contractuelle}) => {
         <div className="m-3">
             <label className="relative inline-flex items-center cursor-pointer">
                 <input type="checkbox" value="" className="sr-only peer" checked={checked} onChange={(contr) => contr.target.checked ? setContractuelle('Oui'):setContractuelle('Non')}/>
-                <div className="w-10 h-5 rounded-full dark:bg-gray-700 peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all border-gray-600 peer-checked:bg-orange-600"></div>
-                <span className="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">Visite contractuelle: {contractuelle}</span>
+                <div className="w-10 h-5 rounded-full bg-gray-700 peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all border-gray-600 peer-checked:bg-orange-600"></div>
+                <span className="ml-3 text-sm font-medium text-gray-300">Visite contractuelle: {contractuelle}</span>
             </label>
         </div>
     )

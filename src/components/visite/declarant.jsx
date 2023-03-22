@@ -56,7 +56,7 @@ const SelectDeclarants = ({listeDeclarants}) => {
 
     return(
         <div className="mt-9 mr-3 ml-3 mb-3">
-            <label htmlFor="declarants" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Selectionner un déclarant</label>
+            <label htmlFor="declarants" className="block mb-2 text-sm font-medium text-white">Selectionner un déclarant</label>
             <select id="declarants" className="border text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white" onChange={handleSelect}>
                 <option defaultValue></option>
                 {listeDeclarants.map((declarant, index) => <option className="text-lg" value={declarant.code_personne} key={index}>{declarant.nom}</option>)}
