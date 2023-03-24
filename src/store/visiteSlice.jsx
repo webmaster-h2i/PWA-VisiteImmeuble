@@ -8,7 +8,8 @@ const initialState = {
         photos:[],
         info:[],
         declarant:'',
-        authSignature: null
+        authSignature: null,
+        personnes:[]
     },
 }
 
@@ -39,9 +40,12 @@ const visiteReducer = createSlice({
         },
         setAuthSignature: (state, action) => {
             state.visite.authSignature = action.payload
+        },
+        setPersonnes: (state, action) => {
+            state.visite.personnes = action.payload
         }
     }
 })
 
-export const { setImmeuble, setIdVisite, setElements, setPhotos, setinfoGenerales, setVisite, setDeclarant, setAuthSignature } = visiteReducer.actions
+export const { setImmeuble, setIdVisite, setElements, setPhotos, setinfoGenerales, setVisite, setDeclarant, setAuthSignature, setPersonnes } = visiteReducer.actions
 export default visiteReducer.reducer

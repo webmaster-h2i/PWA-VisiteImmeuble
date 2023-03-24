@@ -1,5 +1,13 @@
 == Changelog ==
 
+0.26 - 24/03/2023
+
+added
+
+- Création du formulaire d'ajout des email d'envoi lors de la cloture
+- Liste de checkboxes avec les personnes à qui envoyer le rapport
+- Requête API sendMail
+
 0.23 - 22/03/2023
 
 updated
