@@ -86,7 +86,7 @@ export async function updateCommentaire(idVisite,commentaire){
 }
 
 // Api call pour mettre à jour la date de cloture d'une visite
-export async function updateDateCloture(idVisite,dateCloture){
+export function updateDateCloture(idVisite,dateCloture){
     // récupère le token du store
     const authToken = getCurrentStateFromStore().token.value;
     return api.request({
@@ -264,7 +264,7 @@ export async function deleteSignature(idVisite, codePersonne){
 //--PDF--
 
 // Api call pour récuperer le rapport
-export async function getPdf(idVisite){
+export function getPdf(idVisite){
     // récupère le token du store
     const authToken = getCurrentStateFromStore().token.value;
     return api.request({
@@ -276,6 +276,24 @@ export async function getPdf(idVisite){
         }
     })
 }
+
+//--MAIL--
+
+// Api call pour envoyer le rapport par mail
+export async function sendMail(idVisite, emailAdresse){
+    // récupère le token du store
+    const authToken = getCurrentStateFromStore().token.value;
+    return api.request({
+        url: "/visite/"+idVisite+"/mail",
+        method: "POST",
+        headers: {
+            'Authorization': `Bearer ${authToken}`,
+        },
+        data: emailAdresse
+    })
+}
+
+
 
 //--PARAMETRES--
 

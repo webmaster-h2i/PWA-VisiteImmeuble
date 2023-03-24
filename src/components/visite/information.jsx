@@ -27,8 +27,8 @@ export default function InfoGenerale(){
     useEffect(() => {
         getPersonnes().then((response) => {
             //Récupère la liste des utilisateurs
-            response.data.data.map((personne)=>
-                setparticipants(participants =>[...participants,{value: personne.code_personne, label: personne.nom + ' ' +personne.prenom}])
+            response.data.data.map(
+                (personne) => setparticipants(participants =>[...participants,{value: personne.code_personne, label: personne.nom + ' ' +personne.prenom}])
             )
             //Si c'est une modification alors on récupère les data de la visite
             if(visiteIdParam){
@@ -68,7 +68,7 @@ export default function InfoGenerale(){
 
         //Création d'un tableau avec la liste des participants, si il est inscrit on ajoute son code, si il n'est pas inscrit on ajoute son nom
         let participantsVisite = [];
-        selectedOption.map(participant => participantsVisite.push(participant.value))
+        selectedOption.map(participant => participantsVisite.push(participant.value));
 
         //Création de l'objet visite qui va être envoyé à l'API
         let info = [{
@@ -77,9 +77,9 @@ export default function InfoGenerale(){
             "type": contractuelle === 'Oui' ? "Contractuelle" : "Ponctuelle",
             "objet": objetVisite,
             "participants": participantsVisite,
-        }]
+        }];
 
-        return info
+        return info;
     }
 
     function handleCreateVisite(){
