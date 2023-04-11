@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { getSecteurs, getComposants, addElement, addPhoto, deletePhoto, getOneElement } from '../../services/api/visiteApi';
 import { setElements, setPhotos } from '../../store/visiteSlice.jsx';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { ReactComponent as Cross } from '../../assets/icons/cross.svg';
 import { ReactComponent as CloudUp } from '../../assets/icons/cloudUp.svg';
 import { ReactComponent as ArrowRight} from '../../assets/icons/arrowRight.svg';
@@ -24,7 +24,6 @@ export default function Element(){
     const [listPhoto, setListPhoto] = useState([]);
     const [loading, setLoading] = useState(true);
     const dispatch = useDispatch();
-    const navigate = useNavigate();
     let {secteurParam} = useParams();
     let {composantParam} = useParams();
     const isOnUpdate = (secteurParam && composantParam) ? true:false;
@@ -66,12 +65,13 @@ export default function Element(){
 
         dispatch(setElements(element));
         dispatch(setPhotos(photos));
-
         setLoading(true);
+
         await addElement(idVisite,element).then((response) => {
-            photosB64.length > 0 ? addPhoto(idVisite,photos).then(clearFields()):navigate(clearFields());     
+
+            if(photosB64.length > 0) addPhoto(idVisite,photos);
+            if(!secteurParam && !composantParam) clearFields(); 
             NotifyToaster(response.data.message, 'info');
-            
             setLoading(false);
         })
     }

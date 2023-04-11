@@ -11,6 +11,7 @@ import Recapitulatif from '../components/visite/recapitulatif';
 import ListeSignature from '../components/visite/signature';
 import Cloture from '../components/visite/cloture';
 import Declarant from '../components/visite/declarant';
+import Policy from '../components/policy';
 
 const router = createBrowserRouter([
     {
@@ -56,6 +57,11 @@ const router = createBrowserRouter([
     {
       path: "/declarant",
       element: <ProtectedRoute><Declarant /></ProtectedRoute>,
+      errorElement: <BasicErrorPage />,
+    },
+    {
+      path: "/policy",
+      element: <Policy />,
       errorElement: <BasicErrorPage />,
     }
 ]);

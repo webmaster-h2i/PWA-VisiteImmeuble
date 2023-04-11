@@ -8,7 +8,7 @@ import { NotifyToaster } from '../../components/notifyToast';
 import { useRef } from 'react';
 import { ReactComponent as ArrowRight} from '../../assets/icons/arrowRight.svg';
 import { ReactComponent as ArrowLeft} from '../../assets/icons/arrowLeft.svg';
-import { setAuthSignature, setPersonnes } from "../../store/visiteSlice.jsx";
+import { setAuthSignature } from "../../store/visiteSlice.jsx";
 
 export default function ListeSignature(){
 
@@ -19,7 +19,6 @@ export default function ListeSignature(){
     const authSignature = useSelector((visite) => visite.visite.visite.authSignature);
     const userInfo = useSelector((user) => user.token.user);
     const signatureDialog = useRef('');
-    const dispatch = useDispatch();
    
     useEffect(() => {
         //Récupère les data de la visite, dont les participants

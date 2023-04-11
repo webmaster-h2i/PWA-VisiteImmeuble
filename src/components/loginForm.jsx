@@ -39,7 +39,7 @@ export default function Login() {
               <form className="space-y-6" onSubmit={handleSubmit}>
                   <div>
                       <label htmlFor="email" className="block mb-2 text-sm font-medium text-white">Email</label>
-                      <input type="email"  name="email" id="email" placeholder="email" value={email} onChange={(e) => setEmail(e.target.value)} className="border sm:text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white" required={true}/>
+                      <input type="email" name="email" id="email" placeholder="email" value={email} onChange={(e) => setEmail(e.target.value)} className="border sm:text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white" required={true}/>
                   </div>
                   <div>
                       <label htmlFor="password" className="block mb-2 text-sm font-medium text-white">Mot de passe</label>

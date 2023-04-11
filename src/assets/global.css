@@ -11,6 +11,7 @@ html{
 input:-webkit-autofill { 
     -webkit-background-clip: text;
     outline: none;
+    color: white;
 }
 
 body

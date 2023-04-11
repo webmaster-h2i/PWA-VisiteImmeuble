@@ -56,15 +56,12 @@ export default function Cloture(){
         }];
 
         updateDateCloture(visite.idVisite,cloture).then((response) => {
-            console.log(response);
             getPdf(visite.idVisite).then((response) => {
                 let file = new Blob([response.data], {type: 'application/pdf'});
                 let fileURL = URL.createObjectURL(file);
                 window.open(fileURL);
                 if(listeEmail){
-                    sendMail(visite.idVisite,listeEmail).then((response) => {
-                        console.log(response);
-                    });
+                    sendMail(visite.idVisite,listeEmail);
                 }
                 NotifyToaster("Visite terminée",'info');
                 navigate("/");
@@ -179,7 +176,7 @@ const ListeEnvoiEmail = ({listePersonne, setListePersEmail, listePersEmail, setD
     )
 }
 
-const ModifEmail = ({visite, listePersEmail, clotureVisite}) => {
+const ModifEmail = ({listePersEmail, clotureVisite}) => {
     
     function handleModifEmail(){
 
