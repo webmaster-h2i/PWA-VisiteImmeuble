@@ -3,7 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch } from "react-redux";
 import { setToken, setUser } from "../store/tokenSlice.jsx";
 import { signIn } from "../services/api/userApi";
-import  ErrorMessage  from './errorMessage';
+import  ErrorMessage  from "./tools/errorMessage";
+import Septlogo from "../assets/images/septlogo.png";
+import { ReactComponent as Eye } from "../assets/icons/eye.svg";
+import { ReactComponent as EyeSlash } from "../assets/icons/eyeSlash.svg";
 
 export default function Login() {
 
@@ -12,6 +15,7 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState('');
+  const [typePassword, setTypePassword] = useState("password");
 
   function handleSubmit(event){
     event.preventDefault();
@@ -30,24 +34,33 @@ export default function Login() {
   }
 
   return (
-    <div className="h-screen flex items-center bg-[url('../assets/images/building3.jpg')] bg-no-repeat bg-cover bg-center">
-      <div className="m-auto">
-        <div className="flex justify-center pb-9">
-          <h1 className="text-white text-3xl">Bienvenu sur NaviLite</h1>
+    <div className="h-screen">
+      <div className="pt-32">
+        <div className="flex justify-center">
+          <img src={Septlogo} className="h-20" alt="Septeo Logo" />
+        </div>
+        <div className="flex justify-center pt-8">
+          <h1 className="text-[color:var(--text-color)] text-3xl">NaviLite</h1>
+        </div>
+        <div className="flex justify-center pt-8">
+          <h4 className="text-[color:var(--text-color)] text-sm">Connectez-vous à votre compte</h4>
         </div>
         <div className="w-full">
-          <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
+          <div className="p-6 pt-2 space-y-4 md:space-y-6 sm:p-8">
               <ErrorMessage errors={error}/>
               <form className="space-y-6" onSubmit={handleSubmit}>
                   <div>
-                      <label htmlFor="email" className="block mb-2 text-sm font-medium text-white">Email</label>
-                      <input type="email" name="email" id="email" placeholder="email" value={email} onChange={(e) => setEmail(e.target.value)} className="border sm:text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white" required={true}/>
+                      <label htmlFor="email" className="block mb-2 text-sm font-medium text-[color:var(--text-color)]">Email*</label>
+                      <input type="email" name="email" id="email" placeholder="email" value={email} onChange={(e) => setEmail(e.target.value)} className="border sm:text-sm rounded-lg block w-full p-2.5 bg-[color:var(--input-color)] border-[color:var(--input-border-color)] placeholder-gray-400 text-[color:var(--text-color)]" required={true}/>
                   </div>
                   <div>
-                      <label htmlFor="password" className="block mb-2 text-sm font-medium text-white">Mot de passe</label>
-                      <input type="password" name="password" id="password" placeholder="mot de passe" value={password} onChange={(e) => setPassword(e.target.value)} className="border sm:text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white" required={true}/>
+                      <label htmlFor="password" className="block mb-2 text-sm font-medium text-[color:var(--text-color)]">Mot de passe*</label>
+                      <div className="absolute right-8 mt-3 mr-1">
+                        {typePassword === "password" ? <EyeSlash onClick={() => setTypePassword("text")}/>:<Eye onClick={() => setTypePassword("password")}/>}
+                      </div>
+                      <input type={typePassword} name="password" id="password" placeholder="mot de passe" value={password} onChange={(e) => setPassword(e.target.value)} className="border sm:text-sm rounded-lg block w-full p-2.5 bg-[color:var(--input-color)] border-[color:var(--input-border-color)] placeholder-gray-400 text-[color:var(--text-color)]" required={true}/>
                   </div>
-                  <button type="submit" className="w-full text-white bg-sky-700 rounded-lg py-2 px-4 hover:bg-blue-600">Connexion</button>
+                  <button type="submit" className="w-full text-[color:var(--text-button-color)] bg-[color:var(--button-color)] rounded py-3 px-4 hover:bg-[color:var(--button-hover-color)] shadow-2xl">Connexion</button>
               </form>
           </div>
         </div>

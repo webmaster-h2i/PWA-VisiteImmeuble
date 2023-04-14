@@ -8,7 +8,7 @@ import { getPersonnes, addVisite, getOneVisite, updateVisite } from '../../servi
 import { useSelector, useDispatch } from 'react-redux';
 import { setIdVisite, setinfoGenerales, setVisite, setAuthSignature} from "../../store/visiteSlice.jsx";
 import { useNavigate, useParams } from 'react-router-dom';
-import { NotifyToaster } from '../../components/notifyToast';
+import { NotifyToaster } from '../tools/notifyToast';
 import { ReactComponent as ArrowRight} from '../../assets/icons/arrowRight.svg';
 import moment from "moment";
 registerLocale('fr', fr)
@@ -109,7 +109,7 @@ export default function InfoGenerale(){
     return(
         <div>
             <div className="flex justify-center m-9">
-                <h3 className="text-lg text-white">Informations générales</h3>
+                <h3 className="text-lg text-[color:var(--text-color)]">Informations générales</h3>
             </div>
             <div className="mt-9">
                 <PersonnesVisite setSelectedOption={setSelectedOption} participants={participants} selectedOption={selectedOption}/>
@@ -124,7 +124,7 @@ export default function InfoGenerale(){
                 <ObjetVisite setObjetVisite={setObjetVisite} objetVisite={objetVisite}/>
             </div>
             <div className="flex justify-center mt-9 mr-2 ml-2 mb-5">
-                <button className="w-full text-white bg-sky-600 rounded-md py-2 px-4 hover:bg-sky-700" onClick={handleCreateVisite}>Ajout d'élément<i><ArrowRight className="w-5 inline ml-1 mb-1"/></i></button>
+                <button className="w-full text-[color:var(--text-color)] bg-sky-600 rounded-md py-2 px-4 hover:bg-[color:var(--button-color)]" onClick={handleCreateVisite}>Ajout d'élément<i><ArrowRight className="w-5 inline ml-1 mb-1"/></i></button>
             </div>
         </div>
     )
@@ -147,8 +147,8 @@ const Contractuelle = ({setContractuelle, contractuelle}) => {
 const ObjetVisite = ({setObjetVisite, objetVisite}) => {
     return(
         <div className="mt-9 mr-3 ml-3 mb-3">
-            <label htmlFor="objetvisite" className="block mb-2 text-sm font-medium text-white">Objet de la visite *</label>
-            <textarea id="objetvisite" rows="4" className="block p-2.5 w-full text-sm rounded-lg bg-gray-700  placeholder-gray-400 text-white focus:ring-orange-600" placeholder="visite contractuelle" onChange={(objt) => setObjetVisite(objt.target.value)} defaultValue={objetVisite}></textarea>
+            <label htmlFor="objetvisite" className="block mb-2 text-sm font-medium text-[color:var(--text-color)]">Objet de la visite *</label>
+            <textarea id="objetvisite" rows="4" className="block p-2.5 w-full text-sm rounded-lg bg-gray-700  placeholder-gray-400 text-[color:var(--text-color)] focus:ring-orange-600" placeholder="visite contractuelle" onChange={(objt) => setObjetVisite(objt.target.value)} defaultValue={objetVisite}></textarea>
         </div>
     )
 }
@@ -156,8 +156,8 @@ const ObjetVisite = ({setObjetVisite, objetVisite}) => {
 const DatePickerVisite = ({startDate, setStartDate}) => {
     return (
         <div className="mt-9 mr-3 ml-3 mb-3">
-            <label htmlFor="datepickervisite" className="block mb-2 text-sm font-medium text-white">Début de la visite *</label>
-            <DatePicker name="datepickervisite" className="border text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white" dateFormat="dd/MM/yyyy HH:mm" locale="fr" selected={startDate} onChange={(date) => setStartDate(date)} />
+            <label htmlFor="datepickervisite" className="block mb-2 text-sm font-medium text-[color:var(--text-color)]">Début de la visite *</label>
+            <DatePicker name="datepickervisite" className="border text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-[color:var(--text-color)]" dateFormat="dd/MM/yyyy HH:mm" locale="fr" selected={startDate} onChange={(date) => setStartDate(date)} />
         </div>
     );
 };
@@ -167,7 +167,7 @@ const PersonnesVisite = ({setSelectedOption, participants, selectedOption}) => {
     if(selectedOption.length >= 0){
         return(
             <div className="m-3">
-                <label htmlFor="selectpersonnes" className="block mb-2 text-sm font-medium text-white">Participants *</label>
+                <label htmlFor="selectpersonnes" className="block mb-2 text-sm font-medium text-[color:var(--text-color)]">Participants *</label>
                 <CreatableSelect
                     name="selectpersonnes"
                     styles={{
@@ -197,13 +197,13 @@ const PersonnesVisite = ({setSelectedOption, participants, selectedOption}) => {
                         }),
                     }}
                     classNames={{
-                        valueContainer: () => 'bg-gray-700 rounded-lg text-white',
+                        valueContainer: () => 'bg-gray-700 rounded-lg text-[color:var(--text-color)]',
                         group: () => 'bg-gray-700',
                         dropdownIndicator: () => 'bg-gray-700',
                         container: () => 'bg-gray-700 rounded-lg p-1',
                         indicatorsContainer: () => 'bg-gray-700',
                         multiValueLabel: () => 'bg-white',
-                        singleValue: () => 'text-white'
+                        singleValue: () => 'text-[color:var(--text-color)]'
                     }}
                     isMulti
                     value={selectedOption}

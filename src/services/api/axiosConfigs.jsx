@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { NotifyToaster } from '../../components/notifyToast';
+import { NotifyToaster } from '../../components/tools/notifyToast';
 
 // Instanciation de l'api
 export const api = axios.create({

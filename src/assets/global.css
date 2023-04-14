@@ -4,14 +4,22 @@
 @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@600&family=Figtree&family=Montserrat:wght@200&display=swap');
 
 
+:root {
+    --text-color: #11222C;
+    --text-button-color: #FAFAFA;
+    --button-color: #EA6621;
+    --button-hover-color: #d36123;
+    --input-border-color: #d6d4d4;
+    --input-color:  #FFFFFF;
+}
+
 html{
-    background-color: #262626;
+    background-color: #FAFAFA;
 }
 
 input:-webkit-autofill { 
     -webkit-background-clip: text;
     outline: none;
-    color: white;
 }
 
 body

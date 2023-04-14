@@ -7,8 +7,8 @@ import { ReactComponent as Valid } from '../../assets/icons/valid.svg';
 import { ReactComponent as Stop } from '../../assets/icons/stop.svg';
 import { ReactComponent as ArrowRight} from '../../assets/icons/arrowRight.svg';
 import { ReactComponent as ArrowLeft} from '../../assets/icons/arrowLeft.svg';
-import Loader from '../../components/loader';
-import { NotifyToaster } from '../notifyToast';
+import Loader from '../tools/loader';
+import { NotifyToaster } from '../tools/notifyToast';
 
 export default function Recapitulatif(){
 
@@ -34,14 +34,14 @@ export default function Recapitulatif(){
     return(
         <div>
             <div className="flex justify-center m-9">
-                <h3 className="text-lg text-white">Récapitulatif</h3>
+                <h3 className="text-lg text-[color:var(--text-color)]">Récapitulatif</h3>
             </div>
             <div className="p-2">
                 <TableauRecap listElement={listElement} idVisite={idVisite} setLoading={setLoading} loading={loading} setListELement={setListELement}/>
             </div>
             <div className="flex justify-center mt-12 mr-2 ml-2 mb-5">
-                <button className="w-full text-white bg-sky-600 rounded-md py-2 px-4 hover:bg-sky-700 m-1" onClick={() => {window.location.href="/element"}}><i><ArrowLeft className="w-5 inline mr-1 mb-1"/></i>Ajout d'élém.</button>
-                <button className="w-full text-white bg-sky-600 rounded-md py-2 px-4 hover:bg-sky-700 m-1" onClick={() => {window.location.href= osDeclarant ? "/declarant":"/signatures"}}>{osDeclarant ? "Déclarant":"Signatures"}<i><ArrowRight className="w-5 inline ml-1 mb-1"/></i></button>
+                <button className="w-full text-[color:var(--text-color)] bg-sky-600 rounded-md py-2 px-4 hover:bg-[color:var(--button-color)] m-1" onClick={() => {window.location.href="/element"}}><i><ArrowLeft className="w-5 inline mr-1 mb-1"/></i>Ajout d'élém.</button>
+                <button className="w-full text-[color:var(--text-color)] bg-sky-600 rounded-md py-2 px-4 hover:bg-[color:var(--button-color)] m-1" onClick={() => {window.location.href= osDeclarant ? "/declarant":"/signatures"}}>{osDeclarant ? "Déclarant":"Signatures"}<i><ArrowRight className="w-5 inline ml-1 mb-1"/></i></button>
             </div>
         </div>
     )
@@ -74,38 +74,38 @@ const TableauRecap = ({listElement, idVisite, setLoading, loading, setListELemen
         return(
             <div className="divide-y divide-orange-600 bg-neutral-800 rounded-md p-1">
                 <div className="grid grid-cols-7">
-                    <div className="flex justify-center text-white text-sm pt-1 pb-2 col-span-2">
+                    <div className="flex justify-center text-[color:var(--text-color)] text-sm pt-1 pb-2 col-span-2">
                         Secteur
                     </div>
-                    <div className="flex justify-center text-white text-sm pt-1 pb-2 col-span-2">
+                    <div className="flex justify-center text-[color:var(--text-color)] text-sm pt-1 pb-2 col-span-2">
                         Composant
                     </div>
-                    <div className="flex justify-center text-white text-sm pt-1 pb-2 col-span-2">
+                    <div className="flex justify-center text-[color:var(--text-color)] text-sm pt-1 pb-2 col-span-2">
                         Conforme
                     </div>
-                    <div className="flex justify-center text-white text-sm pt-1 pb-2 col-span-1">
+                    <div className="flex justify-center text-[color:var(--text-color)] text-sm pt-1 pb-2 col-span-1">
                         action
                     </div>
                 </div>
                 {listElement.map((elem, index) =>
                     <div key={index} className="grid grid-cols-7">
-                        <div className="flex justify-center text-white text-xs pt-3 col-span-2">
+                        <div className="flex justify-center text-[color:var(--text-color)] text-xs pt-3 col-span-2">
                             {elem.secteur.nom}
                         </div>
-                        <div className="flex justify-center text-white text-xs pt-3 col-span-2">
+                        <div className="flex justify-center text-[color:var(--text-color)] text-xs pt-3 col-span-2">
                             {elem.composant.nom}
                         </div>
-                        <div className="flex justify-center text-white text-xs pt-1 col-span-2">
+                        <div className="flex justify-center text-[color:var(--text-color)] text-xs pt-1 col-span-2">
                             {elem.etat ? <Valid className="w-5 rounded-full text-green-500"/>:<Stop className="w-4 text-orange-500"/>}
                         </div>
                         <div className="inline-flex justify-center text-xs pt-2 col-span-1">
                             <div className="p-1">
-                                <button className=" text-white rounded-full shadow-2xl" onClick={() => window.location.href="/element/"+elem.secteur.id+"/"+elem.composant.id}>
+                                <button className=" text-[color:var(--text-color)] rounded-full shadow-2xl" onClick={() => window.location.href="/element/"+elem.secteur.id+"/"+elem.composant.id}>
                                     <Pen className="w-4 text-sky-500"/>
                                 </button>
                             </div>
                             <div className="p-1">
-                                <button className="text-white rounded-full shadow-2xl" onClick={(e) => handleDeleteElement(e, elem.secteur.id, elem.composant.id)}>
+                                <button className="text-[color:var(--text-color)] rounded-full shadow-2xl" onClick={(e) => handleDeleteElement(e, elem.secteur.id, elem.composant.id)}>
                                     <Trash className="w-4 text-red-500"/>
                                 </button>
                             </div>
@@ -116,7 +116,7 @@ const TableauRecap = ({listElement, idVisite, setLoading, loading, setListELemen
         )
     }else{
         return(
-            <div className='flex justify-center text-white text-sm'>
+            <div className='flex justify-center text-[color:var(--text-color)] text-sm'>
                 <h5>Aucun élément</h5>
             </div>
         )   

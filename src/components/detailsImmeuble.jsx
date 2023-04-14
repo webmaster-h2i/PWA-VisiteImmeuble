@@ -18,7 +18,7 @@ export const DetailsImmeuble = forwardRef(({details}, ref) => {
     //Affiche le détail d'un immeuble
     return(
         <div className={show ? '':'hidden'}>
-            <div className='m-4 text-white'>
+            <div className='m-4 text-[color:var(--text-color)]'>
                 <div className='grid grid-cols-2 gap-4'>
                     <div className='text-xs'>Digicode</div>
                     <div className='text-xs'>{details.details.digicode}</div>

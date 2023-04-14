@@ -7,8 +7,8 @@ import { ReactComponent as Cross } from '../../assets/icons/cross.svg';
 import { ReactComponent as CloudUp } from '../../assets/icons/cloudUp.svg';
 import { ReactComponent as ArrowRight} from '../../assets/icons/arrowRight.svg';
 import { ReactComponent as ArrowLeft} from '../../assets/icons/arrowLeft.svg';
-import { NotifyToaster } from '../../components/notifyToast';
-import Loader from '../../components/loader';
+import { NotifyToaster } from '../tools/notifyToast';
+import Loader from '../tools/loader';
 
 
 export default function Element(){
@@ -90,7 +90,7 @@ export default function Element(){
     return(
         <div>
             <div className="flex justify-center m-9">
-                <h3 className="text-lg text-white">{isOnUpdate ? "Modifier":"Ajouter"} un élément</h3>
+                <h3 className="text-lg text-[color:var(--text-color)]">{isOnUpdate ? "Modifier":"Ajouter"} un élément</h3>
             </div>
             <div className="mt-8">
                 <SelectSecteurs listSecteurs={listSecteurs} setListSecteurs={setListSecteurs} setSelectedSecteur={setSelectedSecteur} selectedSecteur={selectedSecteur}/>
@@ -108,11 +108,11 @@ export default function Element(){
                 <UploadPhoto listPhoto={listPhoto} setListPhoto={setListPhoto} selectedSecteur={selectedSecteur} selectedComposant={selectedComposant} idVisite={idVisite}/>
             </div>
             <div className="flex justify-center mt-7 mr-2 ml-2 mb-5">
-                <button className="w-full text-white bg-orange-600 hover:bg-sky-700 rounded-md py-2 px-4 m-3" onClick={handleCreateElement}>{secteurParam && composantParam ? "Modifier":"Ajouter"}</button>
+                <button className="w-full text-[color:var(--text-color)] bg-orange-600 hover:bg-[color:var(--button-color)] rounded-md py-2 px-4 m-3" onClick={handleCreateElement}>{secteurParam && composantParam ? "Modifier":"Ajouter"}</button>
             </div>
             <div className="flex justify-center mt-7 mr-2 ml-2 mb-5">
-                <button className="w-full text-white bg-sky-600 hover:bg-sky-700 rounded-md py-2 px-4 m-1" onClick={() => {window.location.href="/info/"+idVisite}}><i><ArrowLeft className="w-5 inline mr-1 mb-1"/></i>Info. générale</button>
-                <button className="w-full text-white bg-sky-600 hover:bg-sky-700 rounded-md py-2 px-4 m-1" onClick={() => {window.location.href="/recap"}}>Récapitulatif<i><ArrowRight className="w-5 inline ml-1 mb-1"/></i></button>
+                <button className="w-full text-[color:var(--text-color)] bg-sky-600 hover:bg-[color:var(--button-color)] rounded-md py-2 px-4 m-1" onClick={() => {window.location.href="/info/"+idVisite}}><i><ArrowLeft className="w-5 inline mr-1 mb-1"/></i>Info. générale</button>
+                <button className="w-full text-[color:var(--text-color)] bg-sky-600 hover:bg-[color:var(--button-color)] rounded-md py-2 px-4 m-1" onClick={() => {window.location.href="/recap"}}>Récapitulatif<i><ArrowRight className="w-5 inline ml-1 mb-1"/></i></button>
             </div>
         </div>
     )
@@ -133,8 +133,8 @@ const SelectSecteurs = ({listSecteurs, setListSecteurs, setSelectedSecteur, sele
 
     return(
         <div className="mt-9 mr-3 ml-3 mb-3">
-            <label htmlFor="Secteur" className="block mb-2 text-sm font-medium text-white">Parties communes</label>
-            <select value={selectedSecteur} onChange={handleSelect} id="Secteur" className="border text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white">
+            <label htmlFor="Secteur" className="block mb-2 text-sm font-medium text-[color:var(--text-color)]">Parties communes</label>
+            <select value={selectedSecteur} onChange={handleSelect} id="Secteur" className="border text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-[color:var(--text-color)]">
                 <option defaultValue></option>
                 {listSecteurs.map(secteur => <option className="text-lg" value={secteur.id} key={secteur.id}>{secteur.nom}</option>)}
             </select>
@@ -157,8 +157,8 @@ const SelectComposants = ({listComposants, setListComposants, setSelectedComposa
 
     return(
         <div className="mt-9 mr-3 ml-3 mb-3">
-            <label htmlFor="composants" className="block mb-2 text-sm font-medium text-white">Composant</label>
-            <select value={selectedComposant} onChange={handleSelect} id="composants" className="border text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white">
+            <label htmlFor="composants" className="block mb-2 text-sm font-medium text-[color:var(--text-color)]">Composant</label>
+            <select value={selectedComposant} onChange={handleSelect} id="composants" className="border text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-[color:var(--text-color)]">
                 <option defaultValue></option>
                 { selectedSecteur ? listComposants.map(composant => <option className="text-lg" value={composant.id} key={composant.id}>{composant.nom}</option>): ''}
             </select>
@@ -190,8 +190,8 @@ const CheckBoxes = ({checkConforme,setCheckConforme,checkOs,setCheckOs}) => {
 const Commentaire = ({commentaire, setCommentaire}) => {
     return(
         <div className="mt-9 mr-3 ml-3 mb-3">
-            <label htmlFor="commentaire" className="block mb-2 text-sm font-medium text-white">Commentaire</label>
-            <textarea value={commentaire} id="commentaire" rows="4" className="block p-2.5 w-full text-sm rounded-lg bg-gray-700 placeholder-gray-400 text-white" placeholder="Commentaire" onChange={(com) => setCommentaire(com.target.value)}></textarea>
+            <label htmlFor="commentaire" className="block mb-2 text-sm font-medium text-[color:var(--text-color)]">Commentaire</label>
+            <textarea value={commentaire} id="commentaire" rows="4" className="block p-2.5 w-full text-sm rounded-lg bg-gray-700 placeholder-gray-400 text-[color:var(--text-color)]" placeholder="Commentaire" onChange={(com) => setCommentaire(com.target.value)}></textarea>
         </div>
     )
 }
