@@ -12,6 +12,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 import Navbar from './components/navBar';
 import { ToastContainer } from 'react-toastify';
 
+// Persistor permet de sauvegarder dans le localStorage les informations des states globaux (react-redux)
 const persistor = persistStore(store);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

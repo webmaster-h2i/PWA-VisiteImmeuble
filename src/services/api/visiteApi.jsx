@@ -57,7 +57,6 @@ export async function updateVisite(idVisite,visite){
     })
 }
 
-
 // Api call pour supprimer une visite
 export async function deleteVisite(idVisite){
     // récupère le token du store
@@ -292,8 +291,6 @@ export async function sendMail(idVisite, emailAdresse){
         data: emailAdresse
     })
 }
-
-
 
 //--PARAMETRES--
 

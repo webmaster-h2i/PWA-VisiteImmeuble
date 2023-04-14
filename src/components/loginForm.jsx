@@ -15,6 +15,7 @@ export default function Login() {
 
   function handleSubmit(event){
     event.preventDefault();
+    // Call API pour l'authentification
     signIn(email,password).then((response) => {
         // Ajout du token dans un state global ( utilisation de Redux )
         dispatch(setToken(response.data.token));
@@ -23,6 +24,7 @@ export default function Login() {
         // Redirection vers la route immeubles ( utilisation du Router react ) 
         navigate('/accueil');
     }).catch(e => {
+        // Affichage du message d'erreur
         setError(e.response.data.message);
     });
   }

@@ -8,7 +8,7 @@ import { ReactComponent as Pen } from '../assets/icons/pen.svg';
 import { ReactComponent as Trash } from '../assets/icons/trash.svg';
 import { ReactComponent as Plus} from '../assets/icons/plus.svg';
 import { DetailsImmeuble } from './detailsImmeuble';
-import  ErrorMessage  from './errorMessage';
+import ErrorMessage  from './errorMessage';
 import Loader from '../components/loader';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from "react-redux";
@@ -19,10 +19,19 @@ export default function Home() {
 
   const [error, setError] = useState('');
   const selectImmeubleDialog = useRef('');
+  const [listImmeubles, setListImmeubles] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  //Call Api pour récupérer la liste des immeubles
+  useEffect(() => {
+    getImmeubles().then((response) => {
+        setListImmeubles(response.data.data);
+    }).then( setLoading(false) )
+  }, []);
 
   return (
     <div>
-      <SelectImmeuble selectImmeubleDialog={selectImmeubleDialog}/>
+      <SelectImmeuble selectImmeubleDialog={selectImmeubleDialog} listImmeubles={listImmeubles}/>
       <div className='p-3'>
           <div className='flex justify-center pb-3'>
             <h1 className='text-white md:text-3xl text-3xl text-center p-5'>Bienvenue sur Navilite</h1>
@@ -45,32 +54,28 @@ export default function Home() {
         <div className='mb-5 text-white'>
           <h4>Immeubles</h4>
         </div>
-          <Immeubles/>
+          <Immeubles listImmeubles={listImmeubles} loading={loading}/>
         </div>
       </div>
     </div>
   );
 }
 
-const SelectImmeuble = ({selectImmeubleDialog}) => {
+// Affiche la modale qui permet de sélectionner un immeuble lors du début de la visite 
+const SelectImmeuble = ({selectImmeubleDialog, listImmeubles}) => {
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const [listImmeubles, setListImmeubles] = useState([]);
     const [selectedImmeuble, setSelectedImmeuble] = useState(null);
 
-    useEffect(() => {
-        getImmeubles().then((response) => {
-            setListImmeubles(response.data.data);
-        })
-    }, []);
-
+    // Modifie le state locale et globale avec l'immeuble sélectionné 
     const handleSelect = (e) => {
         e.preventDefault();
         dispatch(setImmeuble(e.target.value));
         setSelectedImmeuble(e.target.value);
     }
-
+    
+    // Début de la visite, vérifie qu'un immeuble soit bien sélectionné
     const handleclick = (e) => {
         e.preventDefault();
         if(selectedImmeuble){
@@ -107,19 +112,19 @@ const SelectImmeuble = ({selectImmeubleDialog}) => {
 
 
 //Renvoi la liste des visites en cours
-const VisitesEnCours = ({setError}) => {
+const VisitesEnCours = () => {
 
   const [listVisite, setListVisite] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  //Call Api pour récupérer la liste des immeubles
+  // Call Api pour récupérer la liste des visites
   useEffect(() => {
     getVisiteHome()
   },[]);
 
+  // Filtre les visites qui n'ont pas de date de cloture
   function getVisiteHome(){
-
     getVisites().then((response) => {
       response.data.data.map(visite => 
         !visite.date_cloture ? setListVisite(listVisite =>[...listVisite,visite]):'',
@@ -132,18 +137,18 @@ const VisitesEnCours = ({setError}) => {
 
     event.preventDefault();
     setLoading(true);
-    deleteVisite(idVisite).then((response) => {
-      if(response.status !== 200){
-        setError(response.data.message);
-      }else{
+
+    // Supprime une visite en cours
+    deleteVisite(idVisite).then(() => {
         //MAJ de l'état de la liste des visite en enlevant la visite supprimée
         let filterList = listVisite.filter( visite => visite.id !== idVisite);
         setListVisite(filterList);
-        setLoading(false)
-      }
+        NotifyToaster('La visite a bien été supprimé', 'info');
+        setLoading(false);
     })
   }
 
+  // Redirige vers la page de modification d'une visite
   function handleUpdateVisite(event, idVisite){
     
     event.preventDefault();
@@ -162,50 +167,41 @@ const VisitesEnCours = ({setError}) => {
         </li>
       </ul>
     )
-  }else{
-    return(
-      <ul className='divide-y divide-gray-200 bg-neutral-800 rounded-md p-2'>
-        {listVisite.map((visite, index) =>
-          <li key={index} className='pb-3 sm:pb-4 pt-2'>
-            <div className='flex items-center space-x-3 p-1'>
-                <div className='flex-shrink-0 text-white text-xs'>
-                  {visite.date_creation}
-                </div>
-                <div className='flex-1 text-center min-w-0 text-white text-xs'>
-                  {visite.immeuble.nom}
-                </div>
-                <div className='inline-flex items-center'>
-                  <div className='p-1'>
-                  <button className='bg-orange-600 text-white py-1 px-1 rounded-full shadow-2xl' onClick={(e) => handleUpdateVisite(e,visite.id)}>
-                    <Pen className='w-4'/>
-                  </button>
-                  </div>
-                  <div className='p-1'>
-                  <button className='bg-orange-600 text-white py-1 px-1 rounded-full shadow-2xl' onClick={(e) => handleDeleteVisite(e,visite.id)}>
-                    <Trash className='w-4'/>
-                  </button>
-                  </div>
-                </div>
-            </div>
-          </li>
-        )}
-      </ul>
-    )
   }
+  
+  return(
+    <ul className='divide-y divide-gray-200 bg-neutral-800 rounded-md p-2'>
+      {listVisite.map((visite, index) =>
+        <li key={index} className='pb-3 sm:pb-4 pt-2'>
+          <div className='flex items-center space-x-3 p-1'>
+              <div className='flex-shrink-0 text-white text-xs'>
+                {visite.date_creation}
+              </div>
+              <div className='flex-1 text-center min-w-0 text-white text-xs'>
+                {visite.immeuble.nom}
+              </div>
+              <div className='inline-flex items-center'>
+                <div className='p-1'>
+                <button className='bg-orange-600 text-white py-1 px-1 rounded-full shadow-2xl' onClick={(e) => handleUpdateVisite(e,visite.id)}>
+                  <Pen className='w-4'/>
+                </button>
+                </div>
+                <div className='p-1'>
+                <button className='bg-orange-600 text-white py-1 px-1 rounded-full shadow-2xl' onClick={(e) => handleDeleteVisite(e,visite.id)}>
+                  <Trash className='w-4'/>
+                </button>
+                </div>
+              </div>
+          </div>
+        </li>
+      )}
+    </ul>
+  )
 }
 
+
 //Renvoi la liste des immeubles
-const Immeubles = () => {
-
-  const [listImmeubles, setListImmeubles] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  //Call Api pour récupérer la liste des immeubles
-  useEffect(() => {
-    getImmeubles().then((response) => {
-        setListImmeubles(response.data.data);
-    }).then( setLoading(false) )
-  }, []);
+const Immeubles = ({listImmeubles, loading}) => {
 
   //Tableau de ref lié au détail d'un immeuble. Permet de récupérer la function showDetails() du composant enfant (DetailsImmeuble) vers le composant parent (Home)
   const childRef = useRef([]);
@@ -222,28 +218,28 @@ const Immeubles = () => {
         </li>
       </ul>
     )
-  }else{
-    return(
-      <ul className='divide-y divide-gray-200 bg-neutral-800 rounded-md p-3'>
-        {listImmeubles.map((immeuble, index) =>
-          <li key={immeuble.code_immeuble} className='pb-3 sm:pb-4 pt-2'>
-            <div className='flex items-center space-x-4' onClick={() => childRef.current[index].showDetails() }>
-                <div className='flex-shrink-0 text-white'>
-                  <Building className='w-7'/>
-                </div>
-                <div className='flex-1 min-w-0 text-white text-xs'>
-                  {immeuble.code_immeuble} - {immeuble.nom}
-                </div>
-                <div className='inline-flex items-center text-base font-semibold'>
-                <div className='text-white'>
-                  <ArrowDown className='w-5'/>
-                </div>
-                </div>
-            </div>
-            <DetailsImmeuble details={immeuble} ref={(element) => {childRef.current[index] = element}} />
-          </li>
-        )}
-      </ul>
-    )
   }
+
+  return(
+    <ul className='divide-y divide-gray-200 bg-neutral-800 rounded-md p-3'>
+      {listImmeubles.map((immeuble, index) =>
+        <li key={immeuble.code_immeuble} className='pb-3 sm:pb-4 pt-2'>
+          <div className='flex items-center space-x-4' onClick={() => childRef.current[index].showDetails() }>
+              <div className='flex-shrink-0 text-white'>
+                <Building className='w-7'/>
+              </div>
+              <div className='flex-1 min-w-0 text-white text-xs'>
+                {immeuble.code_immeuble} - {immeuble.nom}
+              </div>
+              <div className='inline-flex items-center text-base font-semibold'>
+              <div className='text-white'>
+                <ArrowDown className='w-5'/>
+              </div>
+              </div>
+          </div>
+          <DetailsImmeuble details={immeuble} ref={(element) => {childRef.current[index] = element}} />
+        </li>
+      )}
+    </ul>
+  )
 }
