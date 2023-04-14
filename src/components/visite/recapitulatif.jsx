@@ -8,6 +8,7 @@ import { ReactComponent as Stop } from '../../assets/icons/stop.svg';
 import { ReactComponent as ArrowRight} from '../../assets/icons/arrowRight.svg';
 import { ReactComponent as ArrowLeft} from '../../assets/icons/arrowLeft.svg';
 import Loader from '../../components/loader';
+import { NotifyToaster } from '../notifyToast';
 
 export default function Recapitulatif(){
 
@@ -46,6 +47,7 @@ export default function Recapitulatif(){
     )
 }
 
+// Liste des éléments ajoutés à la visite
 const TableauRecap = ({listElement, idVisite, setLoading, loading, setListELement}) => {
 
     //Call Api pour supprimer un element
@@ -60,6 +62,7 @@ const TableauRecap = ({listElement, idVisite, setLoading, loading, setListELemen
             //MAJ de l'état de la liste des éléments en enlevant l'élément supprimé
             let filterList = listElement.filter(element => element.composant.id !== composantId && element.secteur.id !== secteurId);
             setListELement(filterList);
+            NotifyToaster("L'élément a bien été supprimé", "info");
         })
         setLoading(false);
     }

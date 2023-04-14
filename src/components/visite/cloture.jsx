@@ -50,6 +50,7 @@ export default function Cloture(){
         }
     }
 
+    //Date
     function clotureVisite(listeEmail=null){
         let cloture = [{
             "date_cloture": moment(clotureDate).format("YYYY-MM-DD HH:mm:ss")
