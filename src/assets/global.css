@@ -5,12 +5,20 @@
 
 
 :root {
-    --text-color: #11222C;
-    --text-button-color: #FAFAFA;
-    --button-color: #EA6621;
+    --first-main-color: #1E3758;
+    --first-text-color: #11222C;
+    --second-text-color: #FFFFFF;
+    --text-first-button-color: #FAFAFA;
+    --first-button-color: #EA6621;
+    --second-button-color: #FAFAFA;
     --button-hover-color: #d36123;
+    --border-button: #d36123;
     --input-border-color: #d6d4d4;
     --input-color:  #FFFFFF;
+    --first-block-home-color: #FFFFFF;
+    --second-block-home-color: #f8f8f8;
+    --first-toggle-color: #1E3758;
+    --second-toggle-color: #d1cccc;
 }
 
 html{
@@ -18,12 +26,11 @@ html{
 }
 
 input:-webkit-autofill { 
-    -webkit-background-clip: text;
     outline: none;
+    -webkit-box-shadow: 0 0 0px 1000px white inset;
 }
 
-body
-{
+body{
     font-family: 'Comfortaa', cursive;
     font-family: 'Figtree', sans-serif;
 }

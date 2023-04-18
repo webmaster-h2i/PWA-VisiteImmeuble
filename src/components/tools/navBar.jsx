@@ -1,5 +1,5 @@
 import { ReactComponent as IconLogout } from '../../assets/icons/logout.svg';
-import Septlogo from '../../assets/images/septlogo.png';
+import { ReactComponent as SepteoLogo } from '../../assets/images/septlogo.svg';
 import { useSelector } from "react-redux";
 import { token } from '../../store/tokenSlice.jsx';
 
@@ -10,14 +10,19 @@ export default function Navbar (){
     // On vérifie que l'utilisateur soit connecté pour afficher la barre de navigation
     if(authToken){
         return(
-            <nav className="border-gray-200 px-2 sm:px-4 py-2.5 bg-sky-600 justify-between">
+            <nav className="px-2 sm:px-4 py-5 justify-between bg-[color:var(--first-main-color)]">
                 <div className="container flex flex-wrap items-center justify-between mx-auto">
-                <div className="border border-white rounded-full bg-orange-500">
-                    <img src={Septlogo} className="h-8 p-1 sm:h-9" alt="Septeo Logo" />
-                </div>
-                    <div className="flex flex-row-reverse space-x-4 space-x-reverse text-[color:var(--text-color)]">
+                    <a href={"/"}>
+                        <div className="inline-flex text-white">
+                            <SepteoLogo className="h-6"/>
+                            <div className="ml-2 text-lg">
+                                <h4>NaviLite</h4>
+                            </div>
+                        </div>
+                    </a>
+                    <div className="flex flex-row-reverse space-x-4 space-x-reverse text-[color:var(--second-text-color)]">
                         <a href={"/logout"}>
-                            <IconLogout className='w-6'/>
+                            <IconLogout className="w-6"/>
                         </a>
                     </div>
                 </div>

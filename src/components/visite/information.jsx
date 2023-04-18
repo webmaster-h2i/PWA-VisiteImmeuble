@@ -5,12 +5,14 @@ import { registerLocale } from  "react-datepicker";
 import { fr } from 'date-fns/locale';
 import CreatableSelect from 'react-select/creatable';
 import { getPersonnes, addVisite, getOneVisite, updateVisite } from '../../services/api/visiteApi';
+import { getImmeubles } from '../../services/api/immeubleApi';
 import { useSelector, useDispatch } from 'react-redux';
-import { setIdVisite, setinfoGenerales, setVisite, setAuthSignature} from "../../store/visiteSlice.jsx";
+import { setIdVisite, setinfoGenerales, setVisite, setAuthSignature, setImmeuble} from "../../store/visiteSlice.jsx";
 import { useNavigate, useParams } from 'react-router-dom';
 import { NotifyToaster } from '../tools/notifyToast';
 import { ReactComponent as ArrowRight} from '../../assets/icons/arrowRight.svg';
 import moment from "moment";
+import Breadcrumb from '../tools/breadcrumb';
 registerLocale('fr', fr)
 
 export default function InfoGenerale(){
@@ -108,24 +110,82 @@ export default function InfoGenerale(){
 
     return(
         <div>
-            <div className="flex justify-center m-9">
-                <h3 className="text-lg text-[color:var(--text-color)]">Informations générales</h3>
+            <div className="flex ml-3 mt-8">
+                <h1 className="text-4xl text-[color:var(--first-text-color)]">Visite d'immeuble</h1>
+            </div>
+            <div>
+                <Breadcrumb/>
             </div>
             <div className="mt-9">
-                <PersonnesVisite setSelectedOption={setSelectedOption} participants={participants} selectedOption={selectedOption}/>
+                <SelectImmeuble/>
             </div>
             <div className="mt-9">
                 <DatePickerVisite startDate={startDate} setStartDate={setStartDate}/>
             </div>
             <div className="mt-9">
+                <ObjetVisite setObjetVisite={setObjetVisite} objetVisite={objetVisite}/>
+            </div>
+            <div className="mt-9">
                 <Contractuelle setContractuelle={setContractuelle} contractuelle={contractuelle}/>
             </div>
             <div className="mt-9">
-                <ObjetVisite setObjetVisite={setObjetVisite} objetVisite={objetVisite}/>
+                <PersonnesVisite setSelectedOption={setSelectedOption} participants={participants} selectedOption={selectedOption}/>
             </div>
-            <div className="flex justify-center mt-9 mr-2 ml-2 mb-5">
-                <button className="w-full text-[color:var(--text-color)] bg-sky-600 rounded-md py-2 px-4 hover:bg-[color:var(--button-color)]" onClick={handleCreateVisite}>Ajout d'élément<i><ArrowRight className="w-5 inline ml-1 mb-1"/></i></button>
+            <div className="flex justify-between mx-auto m-9 p-4">
+                <button className="text-[color:var(--first-button-color)] bg-[color:var(--second-button-color)] rounded-md py-2 px-4 border border-[color:var(--border-button)]" onClick={() => {window.location.href="/"}}>Annuler</button>
+                <button className="text-[color:var(--second-text-color)] bg-[color:var(--first-button-color)] hover:bg-[color:var(--button-hover-color)] rounded-md py-2 px-4 shadow-2xl" onClick={handleCreateVisite}>Suivant<i><ArrowRight className="w-5 inline ml-1 mb-1"/></i></button>
             </div>
+        </div>
+    )
+}
+
+// Affiche la modale qui permet de sélectionner un immeuble lors du début de la visite 
+const SelectImmeuble = () => {
+
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const [selectedImmeuble, setSelectedImmeuble] = useState(null);
+    const [listImmeubles, setListImmeubles] = useState([]);
+
+    //Call Api pour récupérer la liste des immeubles
+    useEffect(() => {
+        getImmeubles().then((response) => {
+            setListImmeubles(response.data.data);
+        })
+    }, []);
+
+    // Modifie le state locale et globale avec l'immeuble sélectionné 
+    const handleSelect = (e) => {
+        e.preventDefault();
+        dispatch(setImmeuble(e.target.value));
+        setSelectedImmeuble(e.target.value);
+    }
+
+    return(
+      <div className="m-3">
+        <label htmlFor="immeubles" className="block mb-2 text-sm font-medium text-[color:var(--first-text-color)]">Selectionner un immeuble</label>
+        <select id="immeubles" onChange={handleSelect} className="w-full border text-sm rounded-lg p-2.5 bg-[color:var(--input-color)] border-[color:var(--input-border-color)] placeholder-gray-400 text-[color:var(--first-text-color)]">
+            <option defaultValue></option>
+            {listImmeubles.map(immeuble => <option className="text-lg" value={immeuble.code_immeuble} key={immeuble.code_immeuble}>{immeuble.code_immeuble} - {immeuble.nom}</option>)}
+        </select>
+      </div>
+    )
+}
+
+const DatePickerVisite = ({startDate, setStartDate}) => {
+    return (
+        <div className="mt-9 mr-3 ml-3 mb-3">
+            <label htmlFor="datepickervisite" className="block mb-2 text-sm font-medium text-[color:var(--first-text-color)]">Début de la visite *</label>
+            <DatePicker name="datepickervisite" className="border text-sm rounded-lg block w-full p-2.5 bg-[color:var(--input-color)] border-[color:var(--input-border-color)] placeholder-gray-400 text-[color:var(--first-text-color)]" dateFormat="dd/MM/yyyy HH:mm" locale="fr" selected={startDate} onChange={(date) => setStartDate(date)} />
+        </div>
+    );
+};
+
+const ObjetVisite = ({setObjetVisite, objetVisite}) => {
+    return(
+        <div className="m-3">
+            <label htmlFor="objetvisite" className="block mb-2 text-sm font-medium text-[color:var(--first-text-color)]">Objet de la visite *</label>
+            <textarea id="objetvisite" rows="4" className="block p-2.5 w-full text-sm rounded-lg bg-[color:var(--input-color)] border border-[color:var(--input-border-color)] placeholder-gray-400 text-[color:var(--first-text-color)]" placeholder="visite contractuelle" onChange={(objt) => setObjetVisite(objt.target.value)} defaultValue={objetVisite}></textarea>
         </div>
     )
 }
@@ -137,37 +197,19 @@ const Contractuelle = ({setContractuelle, contractuelle}) => {
         <div className="m-3">
             <label className="relative inline-flex items-center cursor-pointer">
                 <input type="checkbox" value="" className="sr-only peer" checked={checked} onChange={(contr) => contr.target.checked ? setContractuelle('Oui'):setContractuelle('Non')}/>
-                <div className="w-10 h-5 rounded-full bg-gray-700 peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all border-gray-600 peer-checked:bg-orange-600"></div>
-                <span className="ml-3 text-sm font-medium text-gray-300">Visite contractuelle: {contractuelle}</span>
+                <div className="w-10 h-5 rounded-full bg-[color:var(--second-toggle-color)] peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-400 after:border after:rounded-full after:h-4 after:w-4 after:transition-all border-gray-600 peer-checked:bg-[color:var(--first-toggle-color)]"></div>
+                <span className="ml-3 text-sm font-medium text-[color:var(--first-text-color)]">Visite contractuelle: {contractuelle}</span>
             </label>
         </div>
     )
 }
-
-const ObjetVisite = ({setObjetVisite, objetVisite}) => {
-    return(
-        <div className="mt-9 mr-3 ml-3 mb-3">
-            <label htmlFor="objetvisite" className="block mb-2 text-sm font-medium text-[color:var(--text-color)]">Objet de la visite *</label>
-            <textarea id="objetvisite" rows="4" className="block p-2.5 w-full text-sm rounded-lg bg-gray-700  placeholder-gray-400 text-[color:var(--text-color)] focus:ring-orange-600" placeholder="visite contractuelle" onChange={(objt) => setObjetVisite(objt.target.value)} defaultValue={objetVisite}></textarea>
-        </div>
-    )
-}
-
-const DatePickerVisite = ({startDate, setStartDate}) => {
-    return (
-        <div className="mt-9 mr-3 ml-3 mb-3">
-            <label htmlFor="datepickervisite" className="block mb-2 text-sm font-medium text-[color:var(--text-color)]">Début de la visite *</label>
-            <DatePicker name="datepickervisite" className="border text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-[color:var(--text-color)]" dateFormat="dd/MM/yyyy HH:mm" locale="fr" selected={startDate} onChange={(date) => setStartDate(date)} />
-        </div>
-    );
-};
   
 const PersonnesVisite = ({setSelectedOption, participants, selectedOption}) => {
    
     if(selectedOption.length >= 0){
         return(
             <div className="m-3">
-                <label htmlFor="selectpersonnes" className="block mb-2 text-sm font-medium text-[color:var(--text-color)]">Participants *</label>
+                <label htmlFor="selectpersonnes" className="block mb-2 text-sm font-medium text-[color:var(--first-text-color)]">Participants *</label>
                 <CreatableSelect
                     name="selectpersonnes"
                     styles={{
@@ -180,7 +222,6 @@ const PersonnesVisite = ({setSelectedOption, participants, selectedOption}) => {
                         }),
                         container: (baseStyles) => ({
                             ...baseStyles,
-                            border: "none"
                         }),
                         valueContainer: (baseStyles) => ({
                             ...baseStyles,
@@ -188,7 +229,6 @@ const PersonnesVisite = ({setSelectedOption, participants, selectedOption}) => {
                         }),
                         input: (baseStyles) => ({
                             ...baseStyles,
-                            border: "none",
                             color: "white"
                         }),
                         multiValue: (baseStyles) => ({
@@ -197,13 +237,11 @@ const PersonnesVisite = ({setSelectedOption, participants, selectedOption}) => {
                         }),
                     }}
                     classNames={{
-                        valueContainer: () => 'bg-gray-700 rounded-lg text-[color:var(--text-color)]',
-                        group: () => 'bg-gray-700',
-                        dropdownIndicator: () => 'bg-gray-700',
-                        container: () => 'bg-gray-700 rounded-lg p-1',
-                        indicatorsContainer: () => 'bg-gray-700',
-                        multiValueLabel: () => 'bg-white',
-                        singleValue: () => 'text-[color:var(--text-color)]'
+                        valueContainer: () => 'rounded-lg bg-[color:var(--input-color)] border-[color:var(--input-border-color)]',
+                        group: () => 'bg-[color:var(--input-color)]',
+                        dropdownIndicator: () => 'bg-[color:var(--input-color)]',
+                        container: () => 'bg-[color:var(--input-color)] rounded-lg p-1 border border-[color:var(--input-border-color)] text-sm',
+                        indicatorsContainer: () => 'bg-[color:var(--input-color)]',
                     }}
                     isMulti
                     value={selectedOption}
@@ -213,10 +251,6 @@ const PersonnesVisite = ({setSelectedOption, participants, selectedOption}) => {
                     formatCreateLabel={userInput => `Ajouter : ${userInput}`}
                 />
             </div>
-        )
-    }else{
-        return(
-            <div>test</div>
         )
     }
 }

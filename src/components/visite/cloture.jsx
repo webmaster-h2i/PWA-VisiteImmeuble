@@ -81,7 +81,7 @@ export default function Cloture(){
             </form>
             </dialog>
             <div className="flex justify-center m-9">
-                <h3 className="text-lg text-[color:var(--text-color)]">Clôture de la visite</h3>
+                <h3 className="text-lg text-[color:var(--first-text-color)]">Clôture de la visite</h3>
             </div>
             <div className="mt-9">
                 <DatePickerCloture clotureDate={clotureDate} setClotureDate={setClotureDate}/>
@@ -90,8 +90,8 @@ export default function Cloture(){
                 <CommentaireVisite updateComm={updateComm}/>
             </div>
             <div className="flex justify-center mt-12 mr-3 ml-3">
-                <button className="w-full text-[color:var(--text-color)] bg-sky-600 hover:bg-[color:var(--button-color)] rounded-md py-2 px-4 m-1" onClick={() => {window.location.href="/signatures"}}><i><ArrowLeft className="w-5 inline mr-1 mb-1"/></i>Signatures</button>
-                <button className="w-full text-[color:var(--text-color)] bg-sky-600 hover:bg-[color:var(--button-color)] rounded-md py-2 px-4 m-1" onClick={() => document.getElementById('clotureDialog').showModal()}>Clôturer<i><ArrowRight className="w-5 inline ml-1 mb-1"/></i></button>
+                <button className="w-full text-[color:var(--first-text-color)] bg-sky-600 hover:bg-[color:var(--first-button-color)] rounded-md py-2 px-4 m-1" onClick={() => {window.location.href="/signatures"}}><i><ArrowLeft className="w-5 inline mr-1 mb-1"/></i>Signatures</button>
+                <button className="w-full text-[color:var(--first-text-color)] bg-sky-600 hover:bg-[color:var(--first-button-color)] rounded-md py-2 px-4 m-1" onClick={() => document.getElementById('clotureDialog').showModal()}>Clôturer<i><ArrowRight className="w-5 inline ml-1 mb-1"/></i></button>
             </div>
         </div>
     )
@@ -100,8 +100,8 @@ export default function Cloture(){
 const DatePickerCloture = ({clotureDate, setClotureDate}) => {
     return (
         <div className="mt-9 mr-3 ml-3 mb-3">
-            <label htmlFor="datepickervisite" className="block mb-2 text-sm font-medium text-[color:var(--text-color)]">Fin de la visite *</label>
-            <DatePicker name="datepickervisite" className="border text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-[color:var(--text-color)]" dateFormat="dd/MM/yyyy HH:mm:ss" locale="fr" selected={clotureDate} onChange={(date) => setClotureDate(date)}/>
+            <label htmlFor="datepickervisite" className="block mb-2 text-sm font-medium text-[color:var(--first-text-color)]">Fin de la visite *</label>
+            <DatePicker name="datepickervisite" className="border text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-[color:var(--first-text-color)]" dateFormat="dd/MM/yyyy HH:mm:ss" locale="fr" selected={clotureDate} onChange={(date) => setClotureDate(date)}/>
         </div>
     );
 };
@@ -109,8 +109,8 @@ const DatePickerCloture = ({clotureDate, setClotureDate}) => {
 const CommentaireVisite = ({updateComm}) => {
     return(
         <div className="mt-9 mr-3 ml-3 mb-3">
-            <label htmlFor="commentaire" className="block mb-2 text-sm font-medium text-[color:var(--text-color)]">Mot du gestionnaire *</label>
-            <textarea id="commentaire" rows="4" className="block p-2.5 w-full text-sm rounded-lg bg-gray-700  placeholder-gray-400 text-[color:var(--text-color)] " placeholder="mot du gestionnaire" onBlur={(objt) => updateComm(objt.target.value)}></textarea>
+            <label htmlFor="commentaire" className="block mb-2 text-sm font-medium text-[color:var(--first-text-color)]">Mot du gestionnaire *</label>
+            <textarea id="commentaire" rows="4" className="block p-2.5 w-full text-sm rounded-lg bg-gray-700  placeholder-gray-400 text-[color:var(--first-text-color)] " placeholder="mot du gestionnaire" onBlur={(objt) => updateComm(objt.target.value)}></textarea>
         </div>
     )
 }
@@ -119,9 +119,9 @@ const ClosingDialog = ({setEnvoiEmail,envoiEmail,handleCloture}) => {
     return(
         <div>
             <div className="flex justify-center m-5">
-                <h3 className="text-lg text-[color:var(--text-color)]">Clôture de la visite</h3>
+                <h3 className="text-lg text-[color:var(--first-text-color)]">Clôture de la visite</h3>
             </div>
-            <div className="text-sm text-[color:var(--text-color)] m-1 text-justify">
+            <div className="text-sm text-[color:var(--first-text-color)] m-1 text-justify">
                 <p>Êtes-vous certain de vouloir clôturer cette visite ?</p>
                 <p className="mt-2">Il vous sera par la suite impossible d'apporter des modifications à celle-ci.</p>
             </div>
@@ -134,8 +134,8 @@ const ClosingDialog = ({setEnvoiEmail,envoiEmail,handleCloture}) => {
             </div>
             <menu>
                 <div className="flex justify-center mt-12 mr-3 ml-3">
-                    <button className="w-full text-sm text-[color:var(--text-button-color)]  hover:bg-[color:var(--button-color)] rounded-md py-2 px-4 m-1" value="close">Annuler</button>
-                    <button className="w-full text-[color:var(--text-color)] text-sm  hover:bg-[color:var(--button-color)] rounded-md py-2 px-4 m-1" onClick={(e) => handleCloture(e)}>Clôturer</button>
+                    <button className="w-full text-sm text-[color:var(--second-text-color)]  hover:bg-[color:var(--first-button-color)] rounded-md py-2 px-4 m-1" value="close">Annuler</button>
+                    <button className="w-full text-[color:var(--first-text-color)] text-sm  hover:bg-[color:var(--first-button-color)] rounded-md py-2 px-4 m-1" onClick={(e) => handleCloture(e)}>Clôturer</button>
                 </div>
             </menu>
         </div>
@@ -159,7 +159,7 @@ const ListeEnvoiEmail = ({listePersonne, setListePersEmail, listePersEmail, setD
     return(
         <div>
             <div className="flex justify-center m-5">
-                <h3 className="text-sm text-[color:var(--text-color)]">Participants auquels envoyer le rapport</h3>
+                <h3 className="text-sm text-[color:var(--first-text-color)]">Participants auquels envoyer le rapport</h3>
             </div>
             {listePersonne.map((personne, index) => 
                 <div className="flex items-center m-5" key={index}>
@@ -169,8 +169,8 @@ const ListeEnvoiEmail = ({listePersonne, setListePersEmail, listePersEmail, setD
             )}
             <menu>
                 <div className="flex justify-center mt-12 mr-3 ml-3">
-                    <button className="w-full text-sm text-[color:var(--text-button-color)]  hover:bg-[color:var(--button-color)] rounded-md py-2 px-4 m-1" value="close">Annuler</button>
-                    <button className="w-full text-[color:var(--text-color)] text-sm  hover:bg-[color:var(--button-color)] rounded-md py-2 px-4 m-1" onClick={() => setDialogContent("modifEmail")}>Envoyer</button>
+                    <button className="w-full text-sm text-[color:var(--second-text-color)]  hover:bg-[color:var(--first-button-color)] rounded-md py-2 px-4 m-1" value="close">Annuler</button>
+                    <button className="w-full text-[color:var(--first-text-color)] text-sm  hover:bg-[color:var(--first-button-color)] rounded-md py-2 px-4 m-1" onClick={() => setDialogContent("modifEmail")}>Envoyer</button>
                 </div>
             </menu>
         </div>
@@ -190,18 +190,18 @@ const ModifEmail = ({listePersEmail, clotureVisite}) => {
     return(
         <div>
             <div className="flex justify-center m-5">
-                <h3 className="text-sm text-[color:var(--text-color)]">Participants auquels envoyer le rapport</h3>
+                <h3 className="text-sm text-[color:var(--first-text-color)]">Participants auquels envoyer le rapport</h3>
             </div>
             {listePersEmail.map((personne, index) =>
                 <div className="mt-2" key={index}>
-                    <label htmlFor="email" className="block mb-2 text-sm font-medium text-[color:var(--text-color)]">{personne.nom}</label>
-                    <input onBlur={(e) => personne.email = e.target.value} type="email" name="email" id="email" placeholder="email" defaultValue={!personne.email ? '':personne.email} className="border text-xs rounded-lg block w-full p-1.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-[color:var(--text-color)]"/>
+                    <label htmlFor="email" className="block mb-2 text-sm font-medium text-[color:var(--first-text-color)]">{personne.nom}</label>
+                    <input onBlur={(e) => personne.email = e.target.value} type="email" name="email" id="email" placeholder="email" defaultValue={!personne.email ? '':personne.email} className="border text-xs rounded-lg block w-full p-1.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-[color:var(--first-text-color)]"/>
                 </div>
             )}
             <menu>
                 <div className="flex justify-center mt-12 mr-3 ml-3">
-                    <button className="w-full text-sm text-[color:var(--text-button-color)]  hover:bg-[color:var(--button-color)] rounded-md py-2 px-4 m-1" value="close">Annuler</button>
-                    <button className="w-full text-[color:var(--text-color)] text-sm  hover:bg-[color:var(--button-color)] rounded-md py-2 px-4 m-1" onClick={handleModifEmail}>Clôturer</button>
+                    <button className="w-full text-sm text-[color:var(--second-text-color)]  hover:bg-[color:var(--first-button-color)] rounded-md py-2 px-4 m-1" value="close">Annuler</button>
+                    <button className="w-full text-[color:var(--first-text-color)] text-sm  hover:bg-[color:var(--first-button-color)] rounded-md py-2 px-4 m-1" onClick={handleModifEmail}>Clôturer</button>
                 </div>
             </menu>
         </div>

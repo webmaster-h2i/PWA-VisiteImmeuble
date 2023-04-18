@@ -25,17 +25,17 @@ export default function SelectImmeuble() {
     return (
         <div>
             <div className="flex justify-center m-9">
-                <h3 className="text-lg text-[color:var(--text-color)]">Déclarant</h3>
+                <h3 className="text-lg text-[color:var(--first-text-color)]">Déclarant</h3>
             </div>
-            <div className="flex justify-center text-sm text-justify mt-9 mr-3 ml-3 text-[color:var(--text-color)]">
+            <div className="flex justify-center text-sm text-justify mt-9 mr-3 ml-3 text-[color:var(--first-text-color)]">
                 <p>Cette personne sera désignée comme ayant déclaré l'anomalie nécessitant une intervention (OS).</p>
             </div>
             <div className="mt-9">
                 <SelectDeclarants listeDeclarants={listeDeclarants}/>
             </div>
             <div className="flex justify-center mt-12 mr-3 ml-3">
-                <button className="w-full text-[color:var(--text-color)] bg-sky-600 hover:bg-[color:var(--button-color)] rounded-md py-2 px-4 m-1" onClick={() => {window.location.href="/recap"}}><i><ArrowLeft className="w-5 inline mr-1 mb-1"/></i>Récapitulatif</button>
-                <button className="w-full text-[color:var(--text-color)] bg-sky-600 hover:bg-[color:var(--button-color)] rounded-md py-2 px-4 m-1" onClick={() => {window.location.href="/signatures"}}>Signatures<i><ArrowRight className="w-5 inline ml-1 mb-1"/></i></button>
+                <button className="w-full text-[color:var(--first-text-color)] bg-sky-600 hover:bg-[color:var(--first-button-color)] rounded-md py-2 px-4 m-1" onClick={() => {window.location.href="/recap"}}><i><ArrowLeft className="w-5 inline mr-1 mb-1"/></i>Récapitulatif</button>
+                <button className="w-full text-[color:var(--first-text-color)] bg-sky-600 hover:bg-[color:var(--first-button-color)] rounded-md py-2 px-4 m-1" onClick={() => {window.location.href="/signatures"}}>Signatures<i><ArrowRight className="w-5 inline ml-1 mb-1"/></i></button>
             </div>
         </div>
     );
@@ -56,8 +56,8 @@ const SelectDeclarants = ({listeDeclarants}) => {
 
     return(
         <div className="mt-9 mr-3 ml-3 mb-3">
-            <label htmlFor="declarants" className="block mb-2 text-sm font-medium text-[color:var(--text-color)]">Selectionner un déclarant</label>
-            <select id="declarants" className="border text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-[color:var(--text-color)]" onChange={handleSelect}>
+            <label htmlFor="declarants" className="block mb-2 text-sm font-medium text-[color:var(--first-text-color)]">Selectionner un déclarant</label>
+            <select id="declarants" className="border text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-[color:var(--first-text-color)]" onChange={handleSelect}>
                 <option defaultValue></option>
                 {listeDeclarants.map((declarant, index) => <option className="text-lg" value={declarant.code_personne} key={index}>{declarant.nom}</option>)}
             </select>

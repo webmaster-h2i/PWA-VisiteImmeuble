@@ -40,27 +40,27 @@ export default function Login() {
           <img src={Septlogo} className="h-20" alt="Septeo Logo" />
         </div>
         <div className="flex justify-center pt-8">
-          <h1 className="text-[color:var(--text-color)] text-3xl">NaviLite</h1>
+          <h1 className="text-[color:var(--first-text-color)] text-3xl">NaviLite</h1>
         </div>
         <div className="flex justify-center pt-8">
-          <h4 className="text-[color:var(--text-color)] text-sm">Connectez-vous à votre compte</h4>
+          <h4 className="text-[color:var(--first-text-color)] text-sm">Connectez-vous à votre compte</h4>
         </div>
         <div className="w-full">
           <div className="p-6 pt-2 space-y-4 md:space-y-6 sm:p-8">
               <ErrorMessage errors={error}/>
               <form className="space-y-6" onSubmit={handleSubmit}>
                   <div>
-                      <label htmlFor="email" className="block mb-2 text-sm font-medium text-[color:var(--text-color)]">Email*</label>
-                      <input type="email" name="email" id="email" placeholder="email" value={email} onChange={(e) => setEmail(e.target.value)} className="border sm:text-sm rounded-lg block w-full p-2.5 bg-[color:var(--input-color)] border-[color:var(--input-border-color)] placeholder-gray-400 text-[color:var(--text-color)]" required={true}/>
+                      <label htmlFor="email" className="block mb-2 text-sm font-medium text-[color:var(--first-text-color)]">Email*</label>
+                      <input type="email" name="email" id="email" placeholder="email" value={email} onChange={(e) => setEmail(e.target.value)} className="border sm:text-sm rounded-lg block w-full p-2.5 bg-[color:var(--input-color)] border-[color:var(--input-border-color)] placeholder-gray-400 text-[color:var(--first-text-color)]" required={true}/>
                   </div>
                   <div>
-                      <label htmlFor="password" className="block mb-2 text-sm font-medium text-[color:var(--text-color)]">Mot de passe*</label>
+                      <label htmlFor="password" className="block mb-2 text-sm font-medium text-[color:var(--first-text-color)]">Mot de passe*</label>
                       <div className="absolute right-8 mt-3 mr-1">
                         {typePassword === "password" ? <EyeSlash onClick={() => setTypePassword("text")}/>:<Eye onClick={() => setTypePassword("password")}/>}
                       </div>
-                      <input type={typePassword} name="password" id="password" placeholder="mot de passe" value={password} onChange={(e) => setPassword(e.target.value)} className="border sm:text-sm rounded-lg block w-full p-2.5 bg-[color:var(--input-color)] border-[color:var(--input-border-color)] placeholder-gray-400 text-[color:var(--text-color)]" required={true}/>
+                      <input type={typePassword} name="password" id="password" placeholder="mot de passe" value={password} onChange={(e) => setPassword(e.target.value)} className="border sm:text-sm rounded-lg block w-full p-2.5 bg-[color:var(--input-color)] border-[color:var(--input-border-color)] placeholder-gray-400 text-[color:var(--first-text-color)]" required={true}/>
                   </div>
-                  <button type="submit" className="w-full text-[color:var(--text-button-color)] bg-[color:var(--button-color)] rounded py-3 px-4 hover:bg-[color:var(--button-hover-color)] shadow-2xl">Connexion</button>
+                  <button type="submit" className="w-full text-[color:var(--second-text-color)] bg-[color:var(--first-button-color)] rounded py-3 px-4 hover:bg-[color:var(--button-hover-color)] shadow-2xl">Connexion</button>
               </form>
           </div>
         </div>

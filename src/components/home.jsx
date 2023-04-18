@@ -9,8 +9,7 @@ import { ReactComponent as Trash } from '../assets/icons/trash.svg';
 import { ReactComponent as Plus} from '../assets/icons/plus.svg';
 import { DetailsImmeuble } from './detailsImmeuble';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from "react-redux";
-import { setImmeuble } from '../store/visiteSlice.jsx';
+import { useSelector } from "react-redux";
 import { NotifyToaster } from './tools/notifyToast';
 import ErrorMessage  from './tools/errorMessage';
 import Loader from './tools/loader';
@@ -18,98 +17,45 @@ import Loader from './tools/loader';
 export default function Home() {
 
   const [error, setError] = useState('');
-  const selectImmeubleDialog = useRef('');
   const [listImmeubles, setListImmeubles] = useState([]);
   const [loading, setLoading] = useState(true);
+  const userInfo = useSelector((user) => user.token.user);
 
   //Call Api pour récupérer la liste des immeubles
   useEffect(() => {
     getImmeubles().then((response) => {
         setListImmeubles(response.data.data);
-    }).then( setLoading(false) )
+    }).then(setLoading(false))
   }, []);
 
   return (
     <div>
-      <SelectImmeuble selectImmeubleDialog={selectImmeubleDialog} listImmeubles={listImmeubles}/>
-      <div className='p-3'>
-          <div className='flex justify-center pb-3'>
-            <h1 className='text-[color:var(--text-color)] md:text-3xl text-3xl text-center p-5'>Bienvenue sur Navilite</h1>
-          </div>
-          <div className='flex justify-center mb-7'>
-              <button className='bg-orange-600 hover:bg-[color:var(--button-color)] text-[color:var(--text-color)] font-bold py-3 px-3 rounded-full shadow-2xl' onClick={() => selectImmeubleDialog.current.showModal()}>
-                <Plus className='w-8'/>
-              </button>
+      <div className='m-3'>
+          <div className='flex justify-center mt-8 mb-8'>
+            <p>Bienvenue sur NaviLite <strong>{userInfo.name}</strong></p>
           </div>
           <ErrorMessage errors={error}/>
-          <div className='bg-[color:var(--button-color)] rounded-lg p-3'>
-            <div className='mb-5 text-[color:var(--text-color)]'>
+          <div className='bg-[color:var(--first-main-color)] rounded-lg p-3'>
+            <div className='mb-5 text-lg text-[color:var(--second-text-color)]'>
               <h4>Visites en cours</h4>
             </div>
-              <VisitesEnCours setError={setError}/>
+            <VisitesEnCours setError={setError}/>
+          </div>
+          <div className='bg-[color:var(--first-main-color)] rounded-lg p-3 mt-4'>
+            <div className='mb-5 text-lg text-[color:var(--second-text-color)]'>
+              <h4>Immeubles</h4>
+            </div>
+            <Immeubles listImmeubles={listImmeubles} loading={loading}/>
           </div>
       </div>
-      <div className='p-3'>
-        <div className='bg-[color:var(--button-color)] rounded-lg p-3'>
-        <div className='mb-5 text-[color:var(--text-color)]'>
-          <h4>Immeubles</h4>
-        </div>
-          <Immeubles listImmeubles={listImmeubles} loading={loading}/>
-        </div>
+      <div className='fixed bottom-9 w-full p-3'>
+        <button className='w-full inline-flex justify-center text-[color:var(--second-text-color)] bg-[color:var(--first-button-color)] rounded py-3 px-4 hover:bg-[color:var(--button-hover-color)] shadow-2xl' onClick={() => {window.location.href='/info'}}>
+          <Plus/> <span className="ml-2">Ajouter une visite</span>
+        </button>
       </div>
     </div>
   );
 }
-
-// Affiche la modale qui permet de sélectionner un immeuble lors du début de la visite 
-const SelectImmeuble = ({selectImmeubleDialog, listImmeubles}) => {
-
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
-    const [selectedImmeuble, setSelectedImmeuble] = useState(null);
-
-    // Modifie le state locale et globale avec l'immeuble sélectionné 
-    const handleSelect = (e) => {
-        e.preventDefault();
-        dispatch(setImmeuble(e.target.value));
-        setSelectedImmeuble(e.target.value);
-    }
-    
-    // Début de la visite, vérifie qu'un immeuble soit bien sélectionné
-    const handleclick = (e) => {
-        e.preventDefault();
-        if(selectedImmeuble){
-            NotifyToaster('Début de la visite', 'info');
-            navigate('/info');
-        }
-    }
-
-    return(
-      <div>
-        <dialog ref={selectImmeubleDialog} id="signatureDialog" className="bg-gray-800 w-full bdrp">
-            <form method="dialog">
-                <div className="m-2">
-                  <div className="mt-9">
-                    <label htmlFor="immeubles" className="block mb-2 text-sm font-medium text-[color:var(--text-color)]">Selectionner un immeuble</label>
-                    <select id="immeubles" onChange={handleSelect} className="w-full max-w-md border text-sm rounded-lg focus:ring-orange-600 focus:border-orange-600 p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-[color:var(--text-color)]">
-                        <option defaultValue></option>
-                        {listImmeubles.map(immeuble => <option className="text-lg" value={immeuble.code_immeuble} key={immeuble.code_immeuble}>{immeuble.code_immeuble} - {immeuble.nom}</option>)}
-                    </select>
-                  </div>
-                </div>
-                <menu>
-                    <div className="flex justify-center mt-12 mr-3 ml-3">
-                        <button className="w-full text-[color:var(--text-button-color)]  hover:bg-[color:var(--button-color)] rounded-md py-2 px-4 m-1" value="close">Annuler</button>
-                        <button className="w-full text-[color:var(--text-button-color)]  hover:bg-[color:var(--button-color)] rounded-md py-2 px-4 m-1" onClick={handleclick}>Valider</button>
-                    </div>
-                </menu>
-            </form>
-        </dialog>
-      </div>
-    )
-}
-
-
 
 //Renvoi la liste des visites en cours
 const VisitesEnCours = () => {
@@ -134,10 +80,8 @@ const VisitesEnCours = () => {
 
   //Call Api pour supprimer une visite
   function handleDeleteVisite(event, idVisite){
-
     event.preventDefault();
     setLoading(true);
-
     // Supprime une visite en cours
     deleteVisite(idVisite).then(() => {
         //MAJ de l'état de la liste des visite en enlevant la visite supprimée
@@ -150,7 +94,6 @@ const VisitesEnCours = () => {
 
   // Redirige vers la page de modification d'une visite
   function handleUpdateVisite(event, idVisite){
-    
     event.preventDefault();
     navigate('/info/'+idVisite)
   }
@@ -159,9 +102,9 @@ const VisitesEnCours = () => {
 
   if(listVisite.length <= 0){
     return(
-      <ul className='divide-y divide-gray-200 bg-neutral-800 rounded-md p-2'>
+      <ul className='divide-y divide-gray-200 bg-[color:var(--first-block-home-color)] rounded-md p-2'>
         <li>
-          <div className='flex justify-center text-[color:var(--text-color)]'>
+          <div className='flex justify-center text-[color:var(--first-text-color)]'>
             <h5>Aucune visite en cours</h5>
           </div>
         </li>
@@ -170,32 +113,48 @@ const VisitesEnCours = () => {
   }
   
   return(
-    <ul className='divide-y divide-gray-200 bg-neutral-800 rounded-md p-2'>
-      {listVisite.map((visite, index) =>
-        <li key={index} className='pb-3 sm:pb-4 pt-2'>
-          <div className='flex items-center space-x-3 p-1'>
-              <div className='flex-shrink-0 text-[color:var(--text-color)] text-xs'>
-                {visite.date_creation}
-              </div>
-              <div className='flex-1 text-center min-w-0 text-[color:var(--text-color)] text-xs'>
-                {visite.immeuble.nom}
-              </div>
-              <div className='inline-flex items-center'>
-                <div className='p-1'>
-                <button className='bg-orange-600 text-[color:var(--text-color)] py-1 px-1 rounded-full shadow-2xl' onClick={(e) => handleUpdateVisite(e,visite.id)}>
-                  <Pen className='w-4'/>
-                </button>
+    <div>
+      <ul className='border-b-2 bg-[color:var(--first-block-home-color)] p-2 rounded-t-md'>
+          <li>
+            <div className='flex items-center space-x-3 p-1'>
+                <div className='flex-shrink-0 text-gray-500 text-xs'>
+                  <h4>Début</h4>
                 </div>
-                <div className='p-1'>
-                <button className='bg-orange-600 text-[color:var(--text-color)] py-1 px-1 rounded-full shadow-2xl' onClick={(e) => handleDeleteVisite(e,visite.id)}>
-                  <Trash className='w-4'/>
-                </button>
+                <div className='flex-1 text-center min-w-0 text-gray-500 text-xs'>
+                  <h4>Immeuble</h4>
                 </div>
-              </div>
-          </div>
-        </li>
-      )}
-    </ul>
+                <div className='inline-flex items-center text-gray-500 text-xs'>
+                </div>
+            </div>
+          </li>
+      </ul>
+      <ul className='divide-y divide-gray-200 bg-[color:var(--second-block-home-color)] p-2 rounded-b-md'>
+        {listVisite.map((visite, index) =>
+          <li key={index} className='pb-3 sm:pb-4'>
+            <div className='flex items-center space-x-3 p-1'>
+                <div className='flex-shrink-0 text-[color:var(--first-text-color)] text-sm'>
+                  {visite.date_creation}
+                </div>
+                <div className='flex-1 text-center min-w-0 text-[color:var(--first-text-color)] text-sm'>
+                  {visite.immeuble.nom}
+                </div>
+                <div className='inline-flex items-center'>
+                  <div className='p-1'>
+                  <button className='text-[color:var(--first-text-color)] bg-[color:var(--first-block-home-color)] py-1 px-1 shadow-2xl border border-[color:var(--input-border-color)]' onClick={(e) => handleUpdateVisite(e,visite.id)}>
+                    <Pen className='w-5'/>
+                  </button>
+                  </div>
+                  <div className='p-1'>
+                  <button className='text-[color:var(--first-text-color)] bg-[color:var(--first-block-home-color)] py-1 px-1 shadow-2xl border border-[color:var(--input-border-color)]' onClick={(e) => handleDeleteVisite(e,visite.id)}>
+                    <Trash className='w-5'/>
+                  </button>
+                  </div>
+                </div>
+            </div>
+          </li>
+        )}
+      </ul>
+    </div>
   )
 }
 
@@ -210,9 +169,9 @@ const Immeubles = ({listImmeubles, loading}) => {
 
   if(listImmeubles.length <= 0){
     return(
-      <ul className='divide-y divide-gray-200 bg-neutral-800 rounded-md p-2'>
+      <ul className='divide-y divide-gray-200 bg-[color:var(--first-block-home-color)] rounded-md p-2'>
         <li>
-          <div className='flex justify-center text-[color:var(--text-color)]'>
+          <div className='flex justify-center text-[color:var(--first-text-color)]'>
             <h5>Aucun immeuble</h5>
           </div>
         </li>
@@ -221,20 +180,20 @@ const Immeubles = ({listImmeubles, loading}) => {
   }
 
   return(
-    <ul className='divide-y divide-gray-200 bg-neutral-800 rounded-md p-3'>
+    <ul className='divide-y divide-gray-200 bg-[color:var(--first-block-home-color)] rounded-md'>
       {listImmeubles.map((immeuble, index) =>
-        <li key={immeuble.code_immeuble} className='pb-3 sm:pb-4 pt-2'>
+        <li key={immeuble.code_immeuble} className='pt-2'>
           <div className='flex items-center space-x-4' onClick={() => childRef.current[index].showDetails() }>
-              <div className='flex-shrink-0 text-[color:var(--text-color)]'>
+              <div className='flex-shrink-1 text-[color:var(--first-text-color)] p-2'>
                 <Building className='w-7'/>
               </div>
-              <div className='flex-1 min-w-0 text-[color:var(--text-color)] text-xs'>
+              <div className='flex-1 min-w-0 text-[color:var(--first-text-color)] text-sm'>
                 {immeuble.code_immeuble} - {immeuble.nom}
               </div>
               <div className='inline-flex items-center text-base font-semibold'>
-              <div className='text-[color:var(--text-color)]'>
-                <ArrowDown className='w-5'/>
-              </div>
+                <div className='text-[color:var(--first-text-color)] p-2'>
+                  <ArrowDown className='w-5'/>
+                </div>
               </div>
           </div>
           <DetailsImmeuble details={immeuble} ref={(element) => {childRef.current[index] = element}} />
