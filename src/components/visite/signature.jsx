@@ -9,6 +9,7 @@ import { useRef } from 'react';
 import { ReactComponent as ArrowRight} from '../../assets/icons/arrowRight.svg';
 import { ReactComponent as ArrowLeft} from '../../assets/icons/arrowLeft.svg';
 import { setAuthSignature } from "../../store/visiteSlice.jsx";
+import Breadcrumb from '../tools/breadcrumb';
 
 export default function ListeSignature(){
 
@@ -50,17 +51,20 @@ export default function ListeSignature(){
     return(
         <div>
             <SignaturePad idVisite={idVisite} signatureDialog={signatureDialog} listePersonne={listePersonne} setListePersonne={setListePersonne} personneSelected={personneSelected} setLoading={setLoading}/>
-            <div className="flex justify-center m-9">
-                <h3 className="text-lg text-[color:var(--first-text-color)]">Signature</h3>
+            <div className="flex ml-8 mt-8">
+                <h1 className="text-4xl text-[color:var(--first-text-color)]">Visite d'immeuble</h1>
+            </div>
+            <div>
+                <Breadcrumb/>
             </div>
             {listePersonne.map((pers, index) => 
                 <div key={index} className="flex justify-center mr-5 ml-5 mt-4" >
-                    <button className={pers.signature ? "w-full text-[color:var(--first-text-color)] bg-gray-600 rounded-md py-2 px-4":"w-full text-[color:var(--first-text-color)] bg-orange-600 rounded-md py-2 px-4"} onClick={() => openAlert(pers)} disabled={ pers.signature ? true:false}>{pers.nom}</button>
+                    <button className={pers.signature ? "w-full text-[color:var(--first-text-color)] bg-gray-400 rounded-md py-2 px-4":"w-full text-[color:var(--second-text-color)] bg-[color:var(--first-main-color)] rounded-md py-2 px-4"} onClick={() => openAlert(pers)} disabled={ pers.signature ? true:false}>{pers.nom}</button>
                 </div>
             )}
-            <div className="flex justify-center mt-12 mr-3 ml-3">
-                <button className="w-full text-[color:var(--first-text-color)] bg-sky-600 hover:bg-[color:var(--first-button-color)] rounded-md py-2 px-4 m-1" onClick={() => {window.location.href="/recap"}}><i><ArrowLeft className="w-5 inline mr-1 mb-1"/></i>Récapitulatif</button>
-                <button className="w-full text-[color:var(--first-text-color)] bg-sky-600 hover:bg-[color:var(--first-button-color)] rounded-md py-2 px-4 m-1" onClick={() => {window.location.href="/cloture"}}>Clôture<i><ArrowRight className="w-5 inline ml-1 mb-1"/></i></button>
+            <div className="flex justify-between mx-auto m-9 p-4 mt-10 mb-9">
+                <button className="text-[color:var(--first-button-color)] bg-[color:var(--second-button-color)] rounded-md py-2 px-4 border border-[color:var(--border-button)]" onClick={() => {window.location.href="/recap"}}><i><ArrowLeft className="w-5 inline mr-1 mb-1"/></i>Récapitulatif</button>
+                <button className="text-[color:var(--second-text-color)] bg-[color:var(--first-button-color)] hover:bg-[color:var(--button-hover-color)] rounded-md py-2 px-4 shadow-2xl" onClick={() => {window.location.href="/cloture"}}>Clôture<i><ArrowRight className="w-5 inline ml-1 mb-1"/></i></button>
             </div>
         </div>
     )
@@ -92,7 +96,7 @@ const SignaturePad = ({idVisite, signatureDialog, listePersonne, personneSelecte
 
        //Appel API pour ajouter la signature 
        addSignature(idVisite,signature).then((response) => {
-            NotifyToaster(response.data.message,'info');
+            NotifyToaster(response.data.message,'success');
             setLoading(false);
         })
     }
@@ -104,26 +108,26 @@ const SignaturePad = ({idVisite, signatureDialog, listePersonne, personneSelecte
 
     return(
         <div>
-            <dialog ref={signatureDialog} onClose={handleClearSignature} id="signatureDialog" className="bg-gray-800">
+            <dialog ref={signatureDialog} onClose={handleClearSignature} id="signatureDialog" className="bg-[color:var(--seconde-toggle-color)]">
                 <form method="dialog">
                     <div className="flex justify-center">
                         <div>
                             <div>
                                 <div className="flex justify-center m-2">
-                                    <SignatureCanvas penColor='green'canvasProps={{width: 300, height: 500, className: 'sigCanvas border border-gray-300 bg-gray-700'}} ref={(ref) => { sigPad.current = ref }}/>
+                                    <SignatureCanvas penColor="black" canvasProps={{width: 350, height: 600, className: "sigCanvas border border-[color:var(--first-main-color)] bg-gray-100"}} ref={(ref) => { sigPad.current = ref }}/>
                                 </div>
                             </div>
                             <div>
                                 <div className="flex justify-center">
-                                    <button type="reset" className="text-[color:var(--first-text-color)] bg-sky-600 rounded-md py-2 px-6 hover:bg-[color:var(--first-button-color)] m-1" onClick={handleClearSignature}>Effacer</button>
+                                    <button type="reset" className="text-[color:var(--second-text-color)] bg-[color:var(--first-main-color)] rounded-md py-2 px-6 m-1" onClick={handleClearSignature}>Effacer</button>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <menu>
                         <div className="flex justify-center mt-12 mr-3 ml-3">
-                            <button className="w-full text-[color:var(--second-text-color)]  hover:bg-[color:var(--first-button-color)] rounded-md py-2 px-4 m-1" value="close">Annuler</button>
-                            <button className="w-full text-[color:var(--second-text-color)]  hover:bg-[color:var(--first-button-color)] rounded-md py-2 px-4 m-1" onClick={handleAddSignature}>Valider</button>
+                            <button className="w-full text-[color:var(--first-button-color)] bg-[color:var(--second-button-color)] rounded-md py-2 px-4 m-1" value="close">Annuler</button>
+                            <button className="w-full text-[color:var(--second-text-color)] bg-[color:var(--first-button-color)] rounded-md py-2 px-4 m-1" onClick={handleAddSignature}>Valider</button>
                         </div>
                     </menu>
                 </form>

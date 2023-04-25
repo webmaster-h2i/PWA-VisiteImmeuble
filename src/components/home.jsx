@@ -87,7 +87,7 @@ const VisitesEnCours = () => {
         //MAJ de l'état de la liste des visite en enlevant la visite supprimée
         let filterList = listVisite.filter( visite => visite.id !== idVisite);
         setListVisite(filterList);
-        NotifyToaster('La visite a bien été supprimé', 'info');
+        NotifyToaster('La visite a bien été supprimé', 'success');
         setLoading(false);
     })
   }
@@ -140,14 +140,14 @@ const VisitesEnCours = () => {
                 </div>
                 <div className='inline-flex items-center'>
                   <div className='p-1'>
-                  <button className='text-[color:var(--first-text-color)] bg-[color:var(--first-block-home-color)] py-1 px-1 shadow-2xl border border-[color:var(--input-border-color)]' onClick={(e) => handleUpdateVisite(e,visite.id)}>
-                    <Pen className='w-5'/>
-                  </button>
+                    <button className='text-[color:var(--first-text-color)] bg-[color:var(--first-block-home-color)] py-1 px-1 shadow-2xl border border-[color:var(--input-border-color)]' onClick={(e) => handleUpdateVisite(e,visite.id)}>
+                      <Pen className='w-5'/>
+                    </button>
                   </div>
                   <div className='p-1'>
-                  <button className='text-[color:var(--first-text-color)] bg-[color:var(--first-block-home-color)] py-1 px-1 shadow-2xl border border-[color:var(--input-border-color)]' onClick={(e) => handleDeleteVisite(e,visite.id)}>
-                    <Trash className='w-5'/>
-                  </button>
+                    <button className='text-[color:var(--first-text-color)] bg-[color:var(--first-block-home-color)] py-1 px-1 shadow-2xl border border-[color:var(--input-border-color)]' onClick={(e) => handleDeleteVisite(e,visite.id)}>
+                      <Trash className='w-5'/>
+                    </button>
                   </div>
                 </div>
             </div>

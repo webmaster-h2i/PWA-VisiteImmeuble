@@ -5,6 +5,7 @@
 
 
 :root {
+    --bg-color: #FAFAFA;
     --first-main-color: #1E3758;
     --first-text-color: #11222C;
     --second-text-color: #FFFFFF;
@@ -28,6 +29,14 @@ html{
 input:-webkit-autofill { 
     outline: none;
     -webkit-box-shadow: 0 0 0px 1000px white inset;
+}
+
+textarea:focus {
+    outline:none;
+}
+
+input:focus {
+    outline:none;
 }
 
 body{

@@ -7,6 +7,7 @@ import { ReactComponent as Cross } from '../../assets/icons/cross.svg';
 import { ReactComponent as CloudUp } from '../../assets/icons/cloudUp.svg';
 import { ReactComponent as ArrowRight} from '../../assets/icons/arrowRight.svg';
 import { ReactComponent as ArrowLeft} from '../../assets/icons/arrowLeft.svg';
+import { ReactComponent as Plus} from '../../assets/icons/plus.svg';
 import { NotifyToaster } from '../tools/notifyToast';
 import Loader from '../tools/loader';
 import Breadcrumb from '../tools/breadcrumb';
@@ -72,7 +73,7 @@ export default function Element(){
 
             if(photosB64.length > 0) addPhoto(idVisite,photos);
             if(!secteurParam && !composantParam) clearFields(); 
-            NotifyToaster(response.data.message, 'info');
+            NotifyToaster(response.data.message, 'success');
             setLoading(false);
         })
     }
@@ -90,8 +91,8 @@ export default function Element(){
 
     return(
         <div>
-            <div className="flex justify-center m-9">
-                <h3 className="text-lg text-[color:var(--first-text-color)]">{isOnUpdate ? "Modifier":"Ajouter"} un élément</h3>
+            <div className="flex ml-8 mt-8">
+                <h1 className="text-4xl text-[color:var(--first-text-color)]">Visite d'immeuble</h1>
             </div>
             <div>
                 <Breadcrumb/>
@@ -111,12 +112,14 @@ export default function Element(){
             <div className="mt-7">
                 <UploadPhoto listPhoto={listPhoto} setListPhoto={setListPhoto} selectedSecteur={selectedSecteur} selectedComposant={selectedComposant} idVisite={idVisite}/>
             </div>
-            <div className="flex justify-center mt-7 mr-2 ml-2 mb-5">
-                <button className="w-full text-[color:var(--first-text-color)] bg-orange-600 hover:bg-[color:var(--first-button-color)] rounded-md py-2 px-4 m-3" onClick={handleCreateElement}>{secteurParam && composantParam ? "Modifier":"Ajouter"}</button>
+            <div className="w-full p-3">
+                <button className='w-full inline-flex justify-center text-[color:var(--second-text-color)] bg-[color:var(--first-button-color)] rounded py-3 px-4 hover:bg-[color:var(--button-hover-color)]' onClick={handleCreateElement}>
+                    <Plus/> <span className="ml-2">{secteurParam && composantParam ? "Modifier":"Ajouter"}</span>
+                </button>
             </div>
-            <div className="flex justify-center mt-7 mr-2 ml-2 mb-5">
-                <button className="w-full text-[color:var(--first-text-color)] bg-sky-600 hover:bg-[color:var(--first-button-color)] rounded-md py-2 px-4 m-1" onClick={() => {window.location.href="/info/"+idVisite}}><i><ArrowLeft className="w-5 inline mr-1 mb-1"/></i>Info. générale</button>
-                <button className="w-full text-[color:var(--first-text-color)] bg-sky-600 hover:bg-[color:var(--first-button-color)] rounded-md py-2 px-4 m-1" onClick={() => {window.location.href="/recap"}}>Récapitulatif<i><ArrowRight className="w-5 inline ml-1 mb-1"/></i></button>
+            <div className="flex justify-center mt-10 mr-3 ml-3 space-x-6 mb-9">
+                <button className="w-full text-[color:var(--first-button-color)] bg-[color:var(--second-button-color)] border-[color:var(--border-button)] border rounded-md py-2 px-4" onClick={() => {window.location.href="/info/"+idVisite}}><i><ArrowLeft className="w-5 inline mr-1 mb-1"/></i>Info. générale</button>
+                <button className="w-full text-[color:var(--second-text-color)] bg-[color:var(--first-button-color)] hover:bg-[color:var(--button-hover-color)] rounded-md py-2 px-4 shadow-2xl" onClick={() => {window.location.href="/recap"}}>Récapitulatif<i><ArrowRight className="w-5 inline ml-1 mb-1"/></i></button>
             </div>
         </div>
     )
@@ -138,9 +141,9 @@ const SelectSecteurs = ({listSecteurs, setListSecteurs, setSelectedSecteur, sele
     return(
         <div className="mt-9 mr-3 ml-3 mb-3">
             <label htmlFor="Secteur" className="block mb-2 text-sm font-medium text-[color:var(--first-text-color)]">Parties communes</label>
-            <select value={selectedSecteur} onChange={handleSelect} id="Secteur" className="border text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-[color:var(--first-text-color)]">
+            <select value={selectedSecteur} onChange={handleSelect} id="Secteur" className="border text-sm rounded-lg block w-full p-2.5 bg-[color:var(--input-color)] border-[color:var(--input-border-color)] placeholder-gray-400 text-[color:var(--first-text-color)]">
                 <option defaultValue></option>
-                {listSecteurs.map(secteur => <option className="text-lg" value={secteur.id} key={secteur.id}>{secteur.nom}</option>)}
+                {listSecteurs.map(secteur => <option className="text-sm" value={secteur.id} key={secteur.id}>{secteur.nom}</option>)}
             </select>
         </div>
     )
@@ -162,9 +165,9 @@ const SelectComposants = ({listComposants, setListComposants, setSelectedComposa
     return(
         <div className="mt-9 mr-3 ml-3 mb-3">
             <label htmlFor="composants" className="block mb-2 text-sm font-medium text-[color:var(--first-text-color)]">Composant</label>
-            <select value={selectedComposant} onChange={handleSelect} id="composants" className="border text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-[color:var(--first-text-color)]">
+            <select value={selectedComposant} onChange={handleSelect} id="composants" className="border text-sm rounded-lg block w-full p-2.5 bg-[color:var(--input-color)] border-[color:var(--input-border-color)] placeholder-gray-400 text-[color:var(--first-text-color)]">
                 <option defaultValue></option>
-                { selectedSecteur ? listComposants.map(composant => <option className="text-lg" value={composant.id} key={composant.id}>{composant.nom}</option>): ''}
+                { selectedSecteur ? listComposants.map(composant => <option className="text-sm" value={composant.id} key={composant.id}>{composant.nom}</option>): ''}
             </select>
         </div>
     )
@@ -179,13 +182,13 @@ const CheckBoxes = ({checkConforme,setCheckConforme,checkOs,setCheckOs}) => {
         <div className="m-3">
             <label className="relative inline-flex items-center cursor-pointer">
                 <input checked={checkedConforme} onChange={(conf) => conf.target.checked ? setCheckConforme('Oui'):setCheckConforme('Non')} type="checkbox" value="" className="sr-only peer" />
-                <div className="w-10 h-5 rounded-full bg-gray-700 peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all border-gray-600 peer-checked:bg-orange-600"></div>
-                <span className="ml-3 text-xs font-medium text-gray-300">Conforme: {checkConforme}</span>
+                <div className="w-10 h-5 rounded-full bg-[color:var(--second-toggle-color)] peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-400 after:border after:rounded-full after:h-4 after:w-4 after:transition-all border-gray-600 peer-checked:bg-[color:var(--first-toggle-color)]"></div>
+                <span className="ml-3 text-sm font-medium text-[color:var(--first-text-color)]">Conforme: {checkConforme}</span>
                 </label>
                 <label className="relative inline-flex items-center cursor-pointer ml-5">
                 <input checked={checkedOs} onChange={(os) => os.target.checked ? setCheckOs('Oui'):setCheckOs('Non')} type="checkbox" value="" className="sr-only peer" />
-                <div className="w-10 h-5 rounded-full bg-gray-700 peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all border-gray-600 peer-checked:bg-orange-600"></div>
-                <span className="ml-3 text-xs font-medium text-gray-300">Nécessite OS: {checkOs}</span>
+                <div className="w-10 h-5 rounded-full bg-[color:var(--second-toggle-color)] peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-400 after:border after:rounded-full after:h-4 after:w-4 after:transition-all border-gray-600 peer-checked:bg-[color:var(--first-toggle-color)]"></div>
+                <span className="ml-3 text-sm font-medium text-[color:var(--first-text-color)]">Nécessite OS: {checkOs}</span>
             </label>
         </div>
     )
@@ -195,7 +198,7 @@ const Commentaire = ({commentaire, setCommentaire}) => {
     return(
         <div className="mt-9 mr-3 ml-3 mb-3">
             <label htmlFor="commentaire" className="block mb-2 text-sm font-medium text-[color:var(--first-text-color)]">Commentaire</label>
-            <textarea value={commentaire} id="commentaire" rows="4" className="block p-2.5 w-full text-sm rounded-lg bg-gray-700 placeholder-gray-400 text-[color:var(--first-text-color)]" placeholder="Commentaire" onChange={(com) => setCommentaire(com.target.value)}></textarea>
+            <textarea value={commentaire} id="commentaire" rows="4" className="block border p-2.5 w-full text-sm rounded-lg bg-[color:var(--input-color)] border-[color:var(--input-border-color)] placeholder-gray-400 text-[color:var(--first-text-color)]" placeholder="Commentaire" onChange={(com) => setCommentaire(com.target.value)}></textarea>
         </div>
     )
 }
@@ -229,7 +232,7 @@ const UploadPhoto = ({listPhoto, setListPhoto, selectedSecteur, selectedComposan
             <div>
                 <div>
                     <div className="flex items-center justify-center w-full">
-                        <label htmlFor="dropzone-file" className="flex flex-col m-2 p-5 items-center justify-center w-full border-2 border-dashed rounded-lg cursor-pointer  hover:bg-bray-800 bg-gray-700  border-gray-600 hover:border-gray-500 hover:bg-gray-600">
+                        <label htmlFor="dropzone-file" className="flex flex-col m-2 p-5 items-center justify-center w-full border-2 border-dashed rounded-lg cursor-pointer bg-[color:var(--input-color)]">
                             <div className="flex flex-col items-center justify-center">
                                 <CloudUp className="w-9 text-orange-500"/>
                                 <p className="mb-2 text-sm text-gray-400">Ajouter une photo</p>

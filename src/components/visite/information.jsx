@@ -6,8 +6,8 @@ import { fr } from 'date-fns/locale';
 import CreatableSelect from 'react-select/creatable';
 import { getPersonnes, addVisite, getOneVisite, updateVisite } from '../../services/api/visiteApi';
 import { getImmeubles } from '../../services/api/immeubleApi';
-import { useSelector, useDispatch } from 'react-redux';
-import { setIdVisite, setinfoGenerales, setVisite, setAuthSignature, setImmeuble} from "../../store/visiteSlice.jsx";
+import { useDispatch } from 'react-redux';
+import { setinfoGenerales, setVisite, setImmeuble, setPersonnes} from "../../store/visiteSlice.jsx";
 import { useNavigate, useParams } from 'react-router-dom';
 import { NotifyToaster } from '../tools/notifyToast';
 import { ReactComponent as ArrowRight} from '../../assets/icons/arrowRight.svg';
@@ -22,8 +22,10 @@ export default function InfoGenerale(){
     const [startDate, setStartDate] = useState(new Date());
     const [contractuelle, setContractuelle] = useState('Non');
     const [objetVisite, setObjetVisite] = useState('');
+    const [selectedImmeuble, setSelectedImmeuble] = useState('');
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    //En cas de modification des informations de la visite le paramètre idVisite est ajouté à l'url 
     let {visiteIdParam} = useParams();
 
     useEffect(() => {
@@ -39,32 +41,62 @@ export default function InfoGenerale(){
         })
     }, []);
 
-    //Récupère les data de la visite à modifier et les ajoute au formulaire et au state de visite global
+    //Récupère les data de la visite à modifier et les ajoutes au formulaire et au state de visite global
     async function getVisiteToUpdate(){
         //Call API pour récupérer les informations de la visite
         await getOneVisite(visiteIdParam).then((response) =>{
             
             //Modifie les states du composant pour afficher les data de la visite dans le formulaire
-            response.data.data.personnes.map((parti) => 
-                setSelectedOption(selectedOption =>[...selectedOption,{value: parti.details ? parti.details.code_personne: parti.nom, label: parti.nom}])
+            response.data.data.personnes.map((participant) => 
+                setSelectedOption(selectedOption =>[...selectedOption,{value: participant.details ? participant.details.code_personne: participant.nom, label: participant.nom}])
             );
             setObjetVisite(response.data.data.objet);
             response.data.data.type === 'Contractuelle' ? setContractuelle('Oui'):setContractuelle('Non');
             setStartDate(moment(response.data.data.date_creation, "DD/MM/YYYY HH:mm").toDate());
+            setSelectedImmeuble(response.data.data.immeuble);
 
             //Set les infos de la visite à modifier dans le state visite global
             dispatch(setVisite({
-                "immeuble":response.data.data.immeuble.code_immeuble,
+                "immeuble": response.data.data.immeuble,
                 "idVisite": visiteIdParam,
                 "elements": response.data.data.elements,
                 "photos": [],
                 "info": formatObjectInfo(),
-                "authSignature": null
+                "authSignature": null,
+                "personnes":[]
             }))    
         });
     }
 
-    const immeuble = useSelector((visite) => visite.visite.visite.immeuble);
+    function handleCreateVisite(){
+
+        let info = formatObjectInfo();
+
+        //Si l'id de la visite est présent en paramètre alors on modifie la visite sinon on la créé
+        if(visiteIdParam){
+            updateVisite(visiteIdParam,info).then((response) => {
+                NotifyToaster(response.data.message, 'success');
+                dispatch(setinfoGenerales(info));
+                dispatch(setImmeuble(selectedImmeuble));
+                dispatch(setPersonnes(selectedOption));
+                navigate("/element");
+            })
+        }else{
+            addVisite(info).then((response) => {
+                NotifyToaster(response.data.message, 'success');
+                dispatch(setVisite({
+                    "immeuble": selectedImmeuble,
+                    "idVisite": response.data.data.id,
+                    "elements": [],
+                    "photos": [],
+                    "info": formatObjectInfo(),
+                    "authSignature": null,
+                    "personnes": selectedOption
+                }))
+                navigate("/element");
+            })
+        }
+    }
 
     function formatObjectInfo(){
 
@@ -74,7 +106,7 @@ export default function InfoGenerale(){
 
         //Création de l'objet visite qui va être envoyé à l'API
         let info = [{
-            "code_immeuble": immeuble,
+            "code_immeuble": selectedImmeuble.code_immeuble,
             "date_creation": moment(startDate).format("YYYY-MM-DD HH:mm:ss"),
             "type": contractuelle === 'Oui' ? "Contractuelle" : "Ponctuelle",
             "objet": objetVisite,
@@ -84,40 +116,16 @@ export default function InfoGenerale(){
         return info;
     }
 
-    function handleCreateVisite(){
-
-        let visite = formatObjectInfo();
-
-        //On reset la signature du gestionnaire authentifié 
-        dispatch(setAuthSignature(null));
-
-        //Si l'id de la visite est présent en paramètre alors on modifie la visite sinon on la créé
-        if(visiteIdParam){
-            updateVisite(visiteIdParam,visite).then((response) => {
-                NotifyToaster(response.data.message, 'info');
-                dispatch(setinfoGenerales(visite));
-                navigate("/element");
-            })
-        }else{
-            addVisite(visite).then((response) => {
-                NotifyToaster(response.data.message, 'info');
-                dispatch(setIdVisite(response.data.data.id));
-                dispatch(setinfoGenerales(visite));
-                navigate("/element");
-            })
-        }
-    }
-
     return(
         <div>
-            <div className="flex ml-3 mt-8">
+            <div className="flex ml-8 mt-8">
                 <h1 className="text-4xl text-[color:var(--first-text-color)]">Visite d'immeuble</h1>
             </div>
             <div>
                 <Breadcrumb/>
             </div>
             <div className="mt-9">
-                <SelectImmeuble/>
+                <SelectImmeuble selectedImmeuble={selectedImmeuble} setSelectedImmeuble={setSelectedImmeuble} visiteIdParam={visiteIdParam}/>
             </div>
             <div className="mt-9">
                 <DatePickerVisite startDate={startDate} setStartDate={setStartDate}/>
@@ -131,7 +139,7 @@ export default function InfoGenerale(){
             <div className="mt-9">
                 <PersonnesVisite setSelectedOption={setSelectedOption} participants={participants} selectedOption={selectedOption}/>
             </div>
-            <div className="flex justify-between mx-auto m-9 p-4">
+            <div className="flex justify-between mx-auto m-9 p-4 mt-10 mb-9">
                 <button className="text-[color:var(--first-button-color)] bg-[color:var(--second-button-color)] rounded-md py-2 px-4 border border-[color:var(--border-button)]" onClick={() => {window.location.href="/"}}>Annuler</button>
                 <button className="text-[color:var(--second-text-color)] bg-[color:var(--first-button-color)] hover:bg-[color:var(--button-hover-color)] rounded-md py-2 px-4 shadow-2xl" onClick={handleCreateVisite}>Suivant<i><ArrowRight className="w-5 inline ml-1 mb-1"/></i></button>
             </div>
@@ -140,11 +148,9 @@ export default function InfoGenerale(){
 }
 
 // Affiche la modale qui permet de sélectionner un immeuble lors du début de la visite 
-const SelectImmeuble = () => {
+const SelectImmeuble = ({selectedImmeuble, setSelectedImmeuble, visiteIdParam}) => {
 
     const dispatch = useDispatch();
-    const navigate = useNavigate();
-    const [selectedImmeuble, setSelectedImmeuble] = useState(null);
     const [listImmeubles, setListImmeubles] = useState([]);
 
     //Call Api pour récupérer la liste des immeubles
@@ -157,16 +163,17 @@ const SelectImmeuble = () => {
     // Modifie le state locale et globale avec l'immeuble sélectionné 
     const handleSelect = (e) => {
         e.preventDefault();
-        dispatch(setImmeuble(e.target.value));
-        setSelectedImmeuble(e.target.value);
+        setSelectedImmeuble(JSON.parse(e.target[e.target.selectedIndex].getAttribute('immeuble')));
+        dispatch(setImmeuble(JSON.parse(e.target[e.target.selectedIndex].getAttribute('immeuble'))));
     }
+
 
     return(
       <div className="m-3">
         <label htmlFor="immeubles" className="block mb-2 text-sm font-medium text-[color:var(--first-text-color)]">Selectionner un immeuble</label>
-        <select id="immeubles" onChange={handleSelect} className="w-full border text-sm rounded-lg p-2.5 bg-[color:var(--input-color)] border-[color:var(--input-border-color)] placeholder-gray-400 text-[color:var(--first-text-color)]">
+        <select disabled={visiteIdParam ? "disabled":""} id="immeubles" value={selectedImmeuble.code_immeuble} onChange={handleSelect} className="w-full border text-sm rounded-lg p-2.5 bg-[color:var(--input-color)] border-[color:var(--input-border-color)] placeholder-gray-400 text-[color:var(--first-text-color)]">
             <option defaultValue></option>
-            {listImmeubles.map(immeuble => <option className="text-lg" value={immeuble.code_immeuble} key={immeuble.code_immeuble}>{immeuble.code_immeuble} - {immeuble.nom}</option>)}
+            {listImmeubles.map(immeuble => <option className="text-sm" value={immeuble.code_immeuble} immeuble={JSON.stringify(immeuble)} key={immeuble.code_immeuble}>{immeuble.code_immeuble} - {immeuble.nom}</option>)}
         </select>
       </div>
     )
