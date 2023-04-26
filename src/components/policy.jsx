@@ -1,6 +1,6 @@
 export default function Home() {
     return(
-        <div className="text-white m-5">
+        <div className="text-[color:var(--first-text-color)] m-5">
             <h1 className="mb-2 text-lg underline">Politique de confidentialité</h1>
             <div><strong>Introduction</strong></div>
             <div>Devant le développement des nouveaux outils de communication, il est nécessaire de porter une attention particulière à la protection de la vie privée. C’est pourquoi, nous nous engageons à respecter la confidentialité des renseignements personnels que nous collectons.</div>

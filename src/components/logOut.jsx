@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch } from "react-redux";
 import { useEffect } from 'react';
 import storage from 'redux-persist/lib/storage';
-import { setToken } from "../store/tokenSlice.jsx";
+import { setToken, setUser } from "../store/tokenSlice.jsx";
 
 
 export default function LogOut() {
@@ -12,7 +12,8 @@ export default function LogOut() {
 
     useEffect(() => {
         storage.removeItem('persist:root').then(
-            dispatch(setToken(''))
+            dispatch(setToken('')),
+            dispatch(setUser(''))
         ).then(
             navigate('/')
         )

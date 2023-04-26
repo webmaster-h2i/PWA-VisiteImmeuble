@@ -4,18 +4,42 @@
 @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@600&family=Figtree&family=Montserrat:wght@200&display=swap');
 
 
+:root {
+    --bg-color: #FAFAFA;
+    --first-main-color: #1E3758;
+    --first-text-color: #11222C;
+    --second-text-color: #FFFFFF;
+    --text-first-button-color: #FAFAFA;
+    --first-button-color: #EA6621;
+    --second-button-color: #FAFAFA;
+    --button-hover-color: #d36123;
+    --border-button: #d36123;
+    --input-border-color: #d6d4d4;
+    --input-color:  #FFFFFF;
+    --first-block-home-color: #FFFFFF;
+    --second-block-home-color: #f8f8f8;
+    --first-toggle-color: #1E3758;
+    --second-toggle-color: #d1cccc;
+}
+
 html{
-    background-color: #262626;
+    background-color: #FAFAFA;
 }
 
 input:-webkit-autofill { 
-    -webkit-background-clip: text;
     outline: none;
-    color: white;
+    -webkit-box-shadow: 0 0 0px 1000px white inset;
 }
 
-body
-{
+textarea:focus {
+    outline:none;
+}
+
+input:focus {
+    outline:none;
+}
+
+body{
     font-family: 'Comfortaa', cursive;
     font-family: 'Figtree', sans-serif;
 }

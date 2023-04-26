@@ -1,5 +1,5 @@
 import { createBrowserRouter } from 'react-router-dom';
-import BasicErrorPage from '../components/basicErrorPage';
+import BasicErrorPage from '../components/tools/basicErrorPage';
 import Home from '../components/home';
 import Login from '../components/loginForm';
 import LogOut from '../components/logOut';
