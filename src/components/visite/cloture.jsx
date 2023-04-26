@@ -10,25 +10,30 @@ import { useNavigate } from "react-router-dom";
 import { ReactComponent as ArrowRight} from '../../assets/icons/arrowRight.svg';
 import { ReactComponent as ArrowLeft} from '../../assets/icons/arrowLeft.svg';
 import Breadcrumb from '../tools/breadcrumb';
+import ErrorMessage from '../tools/errorMessage';
 registerLocale("fr", fr)
 
 export default function Cloture(){
 
     const [clotureDate, setClotureDate] = useState(new Date());
+    const [updateComm, setUpdateComm] = useState("");
     const [listePersEmail, setListePersEmail] = useState([]);
+    const [errorsForm, setErrorsForm] = useState([]);
     const visite = useSelector((visite) => visite.visite.visite);
     
     const navigate = useNavigate();
 
-    //Update le commentaire (mot du gestionnaire) dès que la textarea n'est plus focus 
-    function updateComm(newComm){
-        let commFormat = [{
-            "commentaire": newComm
-        }]
-        updateCommentaire(visite.idVisite,commFormat);
+    function handleModalCloture(){
+
+        let errors = ErrorMessage([clotureDate,updateComm]);
+        if(errors.some(el => el !== "")){
+            setErrorsForm(errors);
+            return;
+        }
+        document.getElementById('clotureDialog').showModal();
     }
 
-    //Date
+    //Cloture la visite
     function clotureVisite(){
         let cloture = [{
             "date_cloture": moment(clotureDate).format("YYYY-MM-DD HH:mm:ss")
@@ -40,16 +45,19 @@ export default function Cloture(){
            listePersEmail.map((lpe) => listeEmail.push(lpe.email));
         }
 
-        updateDateCloture(visite.idVisite,cloture).then((response) => {
-            getPdf(visite.idVisite).then((response) => {
-                let file = new Blob([response.data], {type: 'application/pdf'});
-                let fileURL = URL.createObjectURL(file);
-                window.open(fileURL);
-                if(listeEmail.length > 0){
-                    sendMail(visite.idVisite,[{"participants":listeEmail}]);
-                }
-                NotifyToaster("Visite terminée",'success');
-                navigate("/");
+        //MAJ du commentaire avant cloture de la visite puis génération du pdf
+        updateCommentaire(visite.idVisite,[{"commentaire": updateComm}]).then((response) => {
+            updateDateCloture(visite.idVisite,cloture).then((response) => {
+                getPdf(visite.idVisite).then((response) => {
+                    let file = new Blob([response.data], {type: 'application/pdf'});
+                    let fileURL = URL.createObjectURL(file);
+                    window.open(fileURL);
+                    if(listeEmail.length > 0){
+                        sendMail(visite.idVisite,[{"participants":listeEmail}]);
+                    }
+                    NotifyToaster("Visite terminée",'success');
+                    navigate("/");
+                })
             })
         })
     }
@@ -68,36 +76,38 @@ export default function Cloture(){
                 <Breadcrumb/>
             </div>
             <div className="mt-9">
-                <DatePickerCloture clotureDate={clotureDate} setClotureDate={setClotureDate}/>
+                <DatePickerCloture clotureDate={clotureDate} setClotureDate={setClotureDate} errorsForm={errorsForm}/>
             </div>
             <div className="mt-9">
-                <CommentaireVisite updateComm={updateComm}/>
+                <CommentaireVisite setUpdateComm={setUpdateComm} errorsForm={errorsForm}/>
             </div>
             <div className="mt-9">
                 <EnvoiParMail visite={visite} setListePersEmail={setListePersEmail} listePersEmail={listePersEmail}/>
             </div>
             <div className="flex justify-center mt-10 mr-3 ml-3 space-x-6 mb-9">
                 <button className="w-full text-[color:var(--first-button-color)] bg-[color:var(--second-button-color)] border-[color:var(--border-button)] border rounded-md py-2 px-4" onClick={() => {window.location.href="/signatures"}}><i><ArrowLeft className="w-5 inline mr-1 mb-1"/></i>Signatures</button>
-                <button className="w-full text-[color:var(--second-text-color)] bg-[color:var(--first-button-color)] hover:bg-[color:var(--button-hover-color)] rounded-md py-2 px-4 shadow-2xl" onClick={() => document.getElementById('clotureDialog').showModal()}>Clôturer<i><ArrowRight className="w-5 inline ml-1 mb-1"/></i></button>
+                <button className="w-full text-[color:var(--second-text-color)] bg-[color:var(--first-button-color)] hover:bg-[color:var(--button-hover-color)] rounded-md py-2 px-4 shadow-2xl" onClick={handleModalCloture}>Clôturer<i><ArrowRight className="w-5 inline ml-1 mb-1"/></i></button>
             </div>
         </div>
     )
 }
 
-const DatePickerCloture = ({clotureDate, setClotureDate}) => {
+const DatePickerCloture = ({clotureDate, setClotureDate, errorsForm}) => {
     return (
         <div className="mr-3 ml-3 mb-3">
             <label htmlFor="datepickervisite" className="block mb-2 text-sm font-medium text-[color:var(--first-text-color)]">Fin de la visite *</label>
-            <DatePicker name="datepickervisite" className="border text-sm rounded-lg block w-full p-2.5 bg-[color:var(--input-color)] border-[color:var(--input-border-color)] placeholder-gray-400 text-[color:var(--first-text-color)]" dateFormat="dd/MM/yyyy HH:mm:ss" locale="fr" selected={clotureDate} onChange={(date) => setClotureDate(date)}/>
+            <DatePicker name="datepickervisite" className={`border text-sm rounded-lg block w-full p-2.5 bg-[color:var(--input-color)] border-[color:var(--input-border-color)] placeholder-gray-400 text-[color:var(--first-text-color)] ${ errorsForm[0] ?"border-red-500":""}`} dateFormat="dd/MM/yyyy HH:mm:ss" locale="fr" selected={clotureDate} onChange={(date) => setClotureDate(date)}/>
+            <p className='italic text-red-500 text-xs mt-2'>{errorsForm[0]}</p>
         </div>
     );
 };
 
-const CommentaireVisite = ({updateComm}) => {
+const CommentaireVisite = ({setUpdateComm, errorsForm}) => {
     return(
         <div className="mr-3 ml-3 mb-3">
             <label htmlFor="commentaire" className="block mb-2 text-sm font-medium text-[color:var(--first-text-color)]">Mot du gestionnaire *</label>
-            <textarea id="commentaire" rows="4" className="block border p-2.5 w-full text-sm rounded-lg bg-[color:var(--input-color)] border-[color:var(--input-border-color)] placeholder-gray-400 text-[color:var(--first-text-color)]" placeholder="mot du gestionnaire" onBlur={(objt) => updateComm(objt.target.value)}></textarea>
+            <textarea id="commentaire" rows="3" className={`block border p-2.5 w-full text-sm rounded-lg bg-[color:var(--input-color)] border-[color:var(--input-border-color)] placeholder-gray-400 text-[color:var(--first-text-color)] ${ errorsForm[1] ?"border-red-500":""}`} placeholder="mot du gestionnaire" onBlur={(objt) => setUpdateComm(objt.target.value)}></textarea>
+            <p className='italic text-red-500 text-xs mt-2'>{errorsForm[1]}</p>
         </div>
     )
 }
@@ -172,6 +182,7 @@ const ListeEnvoiEmail = ({listePersonne, setListePersEmail, listePersEmail}) => 
 
     function handleModifEmail(e){
 
+        //Met à jour l'email de la personne correspondante
         listePersEmail.map((el) => el.nom === e.target.getAttribute('personne') ? el.email = e.target.value:"");
     }
 

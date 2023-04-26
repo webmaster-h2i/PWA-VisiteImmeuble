@@ -10,7 +10,7 @@ export default function Navbar (){
     // On vérifie que l'utilisateur soit connecté pour afficher la barre de navigation
     if(authToken){
         return(
-            <nav className="px-2 sm:px-4 py-5 justify-between bg-[color:var(--first-main-color)]">
+            <nav className="px-2 sm:px-4 py-3 justify-between bg-[color:var(--first-main-color)]">
                 <div className="container flex flex-wrap items-center justify-between mx-auto">
                     <a href={"/"}>
                         <div className="inline-flex text-white">

@@ -1,22 +1,20 @@
 import React from 'react';
-import { useEffect, useState, useRef} from 'react';
+import { useEffect, useState} from 'react';
 import { getImmeubles } from '../services/api/immeubleApi';
 import { getVisites, deleteVisite } from '../services/api/visiteApi';
 import { ReactComponent as Building } from '../assets/icons/building.svg';
 import { ReactComponent as ArrowDown } from '../assets/icons/arrowDown.svg';
+import { ReactComponent as ArrowUp } from '../assets/icons/arrowUp.svg';
 import { ReactComponent as Pen } from '../assets/icons/pen.svg';
 import { ReactComponent as Trash } from '../assets/icons/trash.svg';
 import { ReactComponent as Plus} from '../assets/icons/plus.svg';
-import { DetailsImmeuble } from './detailsImmeuble';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from "react-redux";
 import { NotifyToaster } from './tools/notifyToast';
-import ErrorMessage  from './tools/errorMessage';
 import Loader from './tools/loader';
 
 export default function Home() {
 
-  const [error, setError] = useState('');
   const [listImmeubles, setListImmeubles] = useState([]);
   const [loading, setLoading] = useState(true);
   const userInfo = useSelector((user) => user.token.user);
@@ -34,12 +32,11 @@ export default function Home() {
           <div className='flex justify-center mt-8 mb-8'>
             <p>Bienvenue sur NaviLite <strong>{userInfo.name}</strong></p>
           </div>
-          <ErrorMessage errors={error}/>
           <div className='bg-[color:var(--first-main-color)] rounded-lg p-3'>
             <div className='mb-5 text-lg text-[color:var(--second-text-color)]'>
               <h4>Visites en cours</h4>
             </div>
-            <VisitesEnCours setError={setError}/>
+            <VisitesEnCours/>
           </div>
           <div className='bg-[color:var(--first-main-color)] rounded-lg p-3 mt-4'>
             <div className='mb-5 text-lg text-[color:var(--second-text-color)]'>
@@ -158,12 +155,23 @@ const VisitesEnCours = () => {
   )
 }
 
-
 //Renvoi la liste des immeubles
 const Immeubles = ({listImmeubles, loading}) => {
 
-  //Tableau de ref lié au détail d'un immeuble. Permet de récupérer la function showDetails() du composant enfant (DetailsImmeuble) vers le composant parent (Home)
-  const childRef = useRef([]);
+  const [show, setShow] = useState([]);
+
+  //Methode qui rend visible ou cache le détail d'un immeuble
+  function showDetails(indexImmeuble){
+
+    let indexShow = show.indexOf(indexImmeuble);
+
+    if(indexShow !== -1){
+      let filterList = show.filter(showIndexImmeuble => showIndexImmeuble !== indexImmeuble);
+      setShow(filterList);
+    }else{
+      setShow(showIndexImmeuble => [...showIndexImmeuble, indexImmeuble]);
+    }
+  }
 
   if(loading){return(<Loader/>)}
 
@@ -183,7 +191,7 @@ const Immeubles = ({listImmeubles, loading}) => {
     <ul className='divide-y divide-gray-200 bg-[color:var(--first-block-home-color)] rounded-md'>
       {listImmeubles.map((immeuble, index) =>
         <li key={immeuble.code_immeuble} className='pt-2'>
-          <div className='flex items-center space-x-4' onClick={() => childRef.current[index].showDetails() }>
+          <div className='flex items-center space-x-4' onClick={() => showDetails(index)}>
               <div className='flex-shrink-1 text-[color:var(--first-text-color)] p-2'>
                 <Building className='w-7'/>
               </div>
@@ -192,13 +200,39 @@ const Immeubles = ({listImmeubles, loading}) => {
               </div>
               <div className='inline-flex items-center text-base font-semibold'>
                 <div className='text-[color:var(--first-text-color)] p-2'>
-                  <ArrowDown className='w-5'/>
+                  {
+                    show.includes(index) ? <ArrowUp className='w-5'/>:<ArrowDown className='w-5'/>
+                  }
                 </div>
               </div>
           </div>
-          <DetailsImmeuble details={immeuble} ref={(element) => {childRef.current[index] = element}} />
+          {
+            show.includes(index) ? <DetailsImmeuble details={immeuble}/>:<div></div>
+          }
         </li>
       )}
     </ul>
+  )
+}
+
+//Permet d'afficher le detail d'un immeuble
+const DetailsImmeuble = ({details}) => {
+
+  //Affiche le détail d'un immeuble
+  return(
+      <div className='bg-[color:var(--second-block-home-color)]'>
+          <div className='text-[color:var(--first-text-color)] divide-x-4 p-2 border-t-2'>
+              <div className='grid grid-cols-2 gap-4'>
+                  <div className='text-xs'>Digicode</div>
+                  <div className='text-xs'>{details.details.digicode}</div>
+                  <div className='text-xs'>Adresse</div>
+                  <div className='text-xs'>{details.adresse}</div>
+                  <div className='text-xs'>Ville</div>
+                  <div className='text-xs'>{details.ville}</div>
+                  <div className='text-xs'>Code postal</div>
+                  <div className='text-xs'>{details.code_postal}</div>
+              </div> 
+          </div>
+      </div>
   )
 }

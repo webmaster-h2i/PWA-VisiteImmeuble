@@ -11,6 +11,7 @@ import { ReactComponent as Plus} from '../../assets/icons/plus.svg';
 import { NotifyToaster } from '../tools/notifyToast';
 import Loader from '../tools/loader';
 import Breadcrumb from '../tools/breadcrumb';
+import ErrorMessage from '../tools/errorMessage';
 
 
 export default function Element(){
@@ -25,6 +26,7 @@ export default function Element(){
     const [selectedComposant, setSelectedComposant] = useState('');
     const [listPhoto, setListPhoto] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [errorsForm, setErrorsForm] = useState([]);
     const dispatch = useDispatch();
     let {secteurParam} = useParams();
     let {composantParam} = useParams();
@@ -46,6 +48,13 @@ export default function Element(){
 
     //Récupère et formate l'élément et les photos et fait le call API
     async function handleCreateElement(){
+
+        let errors = ErrorMessage([selectedSecteur,selectedComposant,commentaire]);
+
+        if(errors.some(el => el !== "")){
+            setErrorsForm(errors);
+            return;
+        }
 
         let element = [{
             "secteur_id": selectedSecteur,
@@ -78,6 +87,7 @@ export default function Element(){
         })
     }
 
+    //Permet de vider les champs de formulaire après l'ajout d'un élément
     function clearFields(){
         setCheckConforme('Non');
         setCheckOs('Non');
@@ -85,6 +95,7 @@ export default function Element(){
         setSelectedSecteur('');
         setSelectedComposant('');
         setListPhoto([])
+        setErrorsForm([]);
     }
 
     if(loading){return(<Loader/>)}
@@ -98,21 +109,21 @@ export default function Element(){
                 <Breadcrumb/>
             </div>
             <div className="mt-8">
-                <SelectSecteurs listSecteurs={listSecteurs} setListSecteurs={setListSecteurs} setSelectedSecteur={setSelectedSecteur} selectedSecteur={selectedSecteur}/>
+                <SelectSecteurs listSecteurs={listSecteurs} setListSecteurs={setListSecteurs} setSelectedSecteur={setSelectedSecteur} selectedSecteur={selectedSecteur} errorsForm={errorsForm}/>
             </div>
             <div className="mt-8">
-                <SelectComposants listComposants={listComposants} setListComposants={setListComposants} setSelectedComposant={setSelectedComposant} selectedSecteur={selectedSecteur} selectedComposant={selectedComposant}/>
+                <SelectComposants listComposants={listComposants} setListComposants={setListComposants} setSelectedComposant={setSelectedComposant} selectedSecteur={selectedSecteur} selectedComposant={selectedComposant} errorsForm={errorsForm}/>
             </div>
             <div className="mt-9">
                 <CheckBoxes checkConforme={checkConforme} setCheckConforme={setCheckConforme} checkOs={checkOs} setCheckOs={setCheckOs}/>
             </div>
             <div className="mt-8">
-                <Commentaire commentaire={commentaire} setCommentaire={setCommentaire}/>
+                <Commentaire commentaire={commentaire} setCommentaire={setCommentaire} errorsForm={errorsForm}/>
             </div>
-            <div className="mt-7">
+            <div className="mt-9">
                 <UploadPhoto listPhoto={listPhoto} setListPhoto={setListPhoto} selectedSecteur={selectedSecteur} selectedComposant={selectedComposant} idVisite={idVisite}/>
             </div>
-            <div className="w-full p-3">
+            <div className="w-full mt-5 p-3">
                 <button className='w-full inline-flex justify-center text-[color:var(--second-text-color)] bg-[color:var(--first-button-color)] rounded py-3 px-4 hover:bg-[color:var(--button-hover-color)]' onClick={handleCreateElement}>
                     <Plus/> <span className="ml-2">{secteurParam && composantParam ? "Modifier":"Ajouter"}</span>
                 </button>
@@ -125,7 +136,7 @@ export default function Element(){
     )
 }
 
-const SelectSecteurs = ({listSecteurs, setListSecteurs, setSelectedSecteur, selectedSecteur}) => {
+const SelectSecteurs = ({listSecteurs, setListSecteurs, setSelectedSecteur, selectedSecteur, errorsForm}) => {
 
     useEffect(() => {
         getSecteurs().then((response) => {
@@ -140,16 +151,17 @@ const SelectSecteurs = ({listSecteurs, setListSecteurs, setSelectedSecteur, sele
 
     return(
         <div className="mt-9 mr-3 ml-3 mb-3">
-            <label htmlFor="Secteur" className="block mb-2 text-sm font-medium text-[color:var(--first-text-color)]">Parties communes</label>
-            <select value={selectedSecteur} onChange={handleSelect} id="Secteur" className="border text-sm rounded-lg block w-full p-2.5 bg-[color:var(--input-color)] border-[color:var(--input-border-color)] placeholder-gray-400 text-[color:var(--first-text-color)]">
+            <label htmlFor="Secteur" className="block mb-2 text-sm font-medium text-[color:var(--first-text-color)]">Parties communes*</label>
+            <select value={selectedSecteur} onChange={handleSelect} id="Secteur" className={`border text-sm rounded-lg block w-full p-2.5 bg-[color:var(--input-color)] border-[color:var(--input-border-color)] placeholder-gray-400 text-[color:var(--first-text-color)] ${ errorsForm[0] ?"border-red-500":""}`}>
                 <option defaultValue></option>
                 {listSecteurs.map(secteur => <option className="text-sm" value={secteur.id} key={secteur.id}>{secteur.nom}</option>)}
             </select>
+            <p className='italic text-red-500 text-xs mt-2'>{errorsForm[0]}</p>
         </div>
     )
 }
 
-const SelectComposants = ({listComposants, setListComposants, setSelectedComposant, selectedSecteur, selectedComposant}) => {
+const SelectComposants = ({listComposants, setListComposants, setSelectedComposant, selectedSecteur, selectedComposant, errorsForm}) => {
 
     useEffect(() => {
         getComposants().then((response) => {
@@ -164,11 +176,12 @@ const SelectComposants = ({listComposants, setListComposants, setSelectedComposa
 
     return(
         <div className="mt-9 mr-3 ml-3 mb-3">
-            <label htmlFor="composants" className="block mb-2 text-sm font-medium text-[color:var(--first-text-color)]">Composant</label>
-            <select value={selectedComposant} onChange={handleSelect} id="composants" className="border text-sm rounded-lg block w-full p-2.5 bg-[color:var(--input-color)] border-[color:var(--input-border-color)] placeholder-gray-400 text-[color:var(--first-text-color)]">
+            <label htmlFor="composants" className="block mb-2 text-sm font-medium text-[color:var(--first-text-color)]">Composant*</label>
+            <select value={selectedComposant} onChange={handleSelect} id="composants" className={`border text-sm rounded-lg block w-full p-2.5 bg-[color:var(--input-color)] border-[color:var(--input-border-color)] placeholder-gray-400 text-[color:var(--first-text-color)] ${ errorsForm[1] ?"border-red-500":""}`}>
                 <option defaultValue></option>
                 { selectedSecteur ? listComposants.map(composant => <option className="text-sm" value={composant.id} key={composant.id}>{composant.nom}</option>): ''}
             </select>
+            <p className='italic text-red-500 text-xs mt-2'>{errorsForm[1]}</p>
         </div>
     )
 }
@@ -184,26 +197,27 @@ const CheckBoxes = ({checkConforme,setCheckConforme,checkOs,setCheckOs}) => {
                 <input checked={checkedConforme} onChange={(conf) => conf.target.checked ? setCheckConforme('Oui'):setCheckConforme('Non')} type="checkbox" value="" className="sr-only peer" />
                 <div className="w-10 h-5 rounded-full bg-[color:var(--second-toggle-color)] peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-400 after:border after:rounded-full after:h-4 after:w-4 after:transition-all border-gray-600 peer-checked:bg-[color:var(--first-toggle-color)]"></div>
                 <span className="ml-3 text-sm font-medium text-[color:var(--first-text-color)]">Conforme: {checkConforme}</span>
-                </label>
-                <label className="relative inline-flex items-center cursor-pointer ml-5">
+            </label>
+            <label className="relative inline-flex items-center cursor-pointer ml-5">
                 <input checked={checkedOs} onChange={(os) => os.target.checked ? setCheckOs('Oui'):setCheckOs('Non')} type="checkbox" value="" className="sr-only peer" />
                 <div className="w-10 h-5 rounded-full bg-[color:var(--second-toggle-color)] peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-400 after:border after:rounded-full after:h-4 after:w-4 after:transition-all border-gray-600 peer-checked:bg-[color:var(--first-toggle-color)]"></div>
-                <span className="ml-3 text-sm font-medium text-[color:var(--first-text-color)]">Nécessite OS: {checkOs}</span>
+                <span className="ml-3 text-sm font-medium text-[color:var(--first-text-color)]">Intervention: {checkOs}</span>
             </label>
         </div>
     )
 }
 
-const Commentaire = ({commentaire, setCommentaire}) => {
+const Commentaire = ({commentaire, setCommentaire, errorsForm}) => {
     return(
-        <div className="mt-9 mr-3 ml-3 mb-3">
-            <label htmlFor="commentaire" className="block mb-2 text-sm font-medium text-[color:var(--first-text-color)]">Commentaire</label>
-            <textarea value={commentaire} id="commentaire" rows="4" className="block border p-2.5 w-full text-sm rounded-lg bg-[color:var(--input-color)] border-[color:var(--input-border-color)] placeholder-gray-400 text-[color:var(--first-text-color)]" placeholder="Commentaire" onChange={(com) => setCommentaire(com.target.value)}></textarea>
+        <div className="mt-7 mr-3 ml-3 mb-3">
+            <label htmlFor="commentaire" className="block mb-2 text-sm font-medium text-[color:var(--first-text-color)]">Commentaire*</label>
+            <textarea value={commentaire} id="commentaire" rows="3" className={`block border p-2.5 w-full text-sm rounded-lg bg-[color:var(--input-color)] border-[color:var(--input-border-color)] placeholder-gray-400 text-[color:var(--first-text-color)] ${ errorsForm[2] ?"border-red-500":""}`} placeholder="Commentaire" onChange={(com) => setCommentaire(com.target.value)}></textarea>
+            <p className='italic text-red-500 text-xs mt-2'>{errorsForm[2]}</p>
         </div>
     )
 }
 
-const UploadPhoto = ({listPhoto, setListPhoto, selectedSecteur, selectedComposant, idVisite}) => {
+const UploadPhoto = ({listPhoto, setListPhoto, idVisite}) => {
 
     //Toutes les photos qui existent lors de la modification ont un id contrairement à celles ajoutée pendant
     //C'est ce qui permet de faire la distinction
@@ -227,24 +241,23 @@ const UploadPhoto = ({listPhoto, setListPhoto, selectedSecteur, selectedComposan
         }
     }
 
-    if(selectedSecteur && selectedComposant){
-        return(
+    
+    return(
+        <div>
             <div>
-                <div>
-                    <div className="flex items-center justify-center w-full">
-                        <label htmlFor="dropzone-file" className="flex flex-col m-2 p-5 items-center justify-center w-full border-2 border-dashed rounded-lg cursor-pointer bg-[color:var(--input-color)]">
-                            <div className="flex flex-col items-center justify-center">
-                                <CloudUp className="w-9 text-orange-500"/>
-                                <p className="mb-2 text-sm text-gray-400">Ajouter une photo</p>
-                            </div>
-                            <input id="dropzone-file" type="file" className="hidden" onChange={(file) => handleFileUpload(file.target.files)}/>
-                        </label>
-                    </div> 
-                </div>
-                <div className="flex flex-wrap mt-3">
-                   {listPhoto.map((photo, index) => <div key={index} className="relative"><img className="max-w-10 max-h-12 m-3" src={ photo.id ? 'data:image/png;base64,'+photo.image:photo.image} alt="element"/><div className="absolute top-0 right-0" onClick={() => handleFileDelete(photo.image,photo.id)}><Cross className="w-6 text-red-500"/></div></div>)}
-                </div>
+                <div className="flex items-center justify-center w-full">
+                    <label htmlFor="dropzone-file" className="flex flex-col items-center ml-3 mr-3 justify-center w-full border-2 border-dashed rounded-lg cursor-pointer bg-[color:var(--input-color)]">
+                        <div className="flex flex-col items-center justify-center">
+                            <CloudUp className="w-9 text-[color:var(--first-button-color)]"/>
+                            <p className="mb-2 text-sm text-gray-400">Ajouter une photo</p>
+                        </div>
+                        <input id="dropzone-file" type="file" className="hidden" onChange={(file) => handleFileUpload(file.target.files)}/>
+                    </label>
+                </div> 
             </div>
-        )
-    }
+            <div className="flex flex-wrap mt-3">
+                {listPhoto.map((photo, index) => <div key={index} className="relative"><img className="max-w-10 max-h-12 m-3" src={ photo.id ? 'data:image/png;base64,'+photo.image:photo.image} alt="element"/><div className="absolute top-0 right-0" onClick={() => handleFileDelete(photo.image,photo.id)}><Cross className="w-6 text-red-500"/></div></div>)}
+            </div>
+        </div>
+    )
 }
