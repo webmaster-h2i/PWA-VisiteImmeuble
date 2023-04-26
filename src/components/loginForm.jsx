@@ -3,10 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch } from "react-redux";
 import { setToken, setUser } from "../store/tokenSlice.jsx";
 import { signIn } from "../services/api/userApi";
-import  ErrorMessage  from "./tools/errorMessage";
 import Septlogo from "../assets/images/septlogo.png";
 import { ReactComponent as Eye } from "../assets/icons/eye.svg";
 import { ReactComponent as EyeSlash } from "../assets/icons/eyeSlash.svg";
+import { NotifyToaster } from './tools/notifyToast';
 
 export default function Login() {
 
@@ -14,7 +14,6 @@ export default function Login() {
   const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState('');
   const [typePassword, setTypePassword] = useState("password");
 
   function handleSubmit(event){
@@ -27,10 +26,7 @@ export default function Login() {
         dispatch(setUser(response.data.user));
         // Redirection vers la route immeubles ( utilisation du Router react ) 
         navigate('/accueil');
-    }).catch(e => {
-        // Affichage du message d'erreur
-        setError(e.response.data.message);
-    });
+    })
   }
 
   return (
@@ -46,21 +42,22 @@ export default function Login() {
           <h4 className="text-[color:var(--first-text-color)] text-sm">Connectez-vous à votre compte</h4>
         </div>
         <div className="w-full">
-          <div className="p-6 pt-2 space-y-4 md:space-y-6 sm:p-8">
-              <ErrorMessage errors={error}/>
-              <form className="space-y-6" onSubmit={handleSubmit}>
-                  <div>
+          <div>
+              <form onSubmit={handleSubmit}>
+                  <div className="p-6">
                       <label htmlFor="email" className="block mb-2 text-sm font-medium text-[color:var(--first-text-color)]">Email*</label>
                       <input type="email" name="email" id="email" placeholder="email" value={email} onChange={(e) => setEmail(e.target.value)} className="border sm:text-sm rounded-lg block w-full p-2.5 bg-[color:var(--input-color)] border-[color:var(--input-border-color)] placeholder-gray-400 text-[color:var(--first-text-color)]" required={true}/>
                   </div>
-                  <div>
+                  <div className="p-6">
                       <label htmlFor="password" className="block mb-2 text-sm font-medium text-[color:var(--first-text-color)]">Mot de passe*</label>
                       <div className="absolute right-8 mt-3 mr-1">
                         {typePassword === "password" ? <EyeSlash onClick={() => setTypePassword("text")}/>:<Eye onClick={() => setTypePassword("password")}/>}
                       </div>
                       <input type={typePassword} name="password" id="password" placeholder="mot de passe" value={password} onChange={(e) => setPassword(e.target.value)} className="border sm:text-sm rounded-lg block w-full p-2.5 bg-[color:var(--input-color)] border-[color:var(--input-border-color)] placeholder-gray-400 text-[color:var(--first-text-color)]" required={true}/>
                   </div>
-                  <button type="submit" className="w-full text-[color:var(--second-text-color)] bg-[color:var(--first-button-color)] rounded py-3 px-4 hover:bg-[color:var(--button-hover-color)] shadow-2xl">Connexion</button>
+                  <div className="fixed bottom-0 w-full p-6">
+                    <button type="submit" className="w-full text-[color:var(--second-text-color)] bg-[color:var(--first-button-color)] rounded py-3 px-4 hover:bg-[color:var(--button-hover-color)] shadow-2xl">Connexion</button>
+                  </div>
               </form>
           </div>
         </div>

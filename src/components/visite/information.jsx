@@ -13,6 +13,7 @@ import { NotifyToaster } from '../tools/notifyToast';
 import { ReactComponent as ArrowRight} from '../../assets/icons/arrowRight.svg';
 import moment from "moment";
 import Breadcrumb from '../tools/breadcrumb';
+import ErrorMessage from '../tools/errorMessage';
 registerLocale('fr', fr)
 
 export default function InfoGenerale(){
@@ -23,8 +24,10 @@ export default function InfoGenerale(){
     const [contractuelle, setContractuelle] = useState('Non');
     const [objetVisite, setObjetVisite] = useState('');
     const [selectedImmeuble, setSelectedImmeuble] = useState('');
+    const [errorsForm, setErrorsForm] = useState([]);
     const navigate = useNavigate();
     const dispatch = useDispatch();
+
     //En cas de modification des informations de la visite le paramètre idVisite est ajouté à l'url 
     let {visiteIdParam} = useParams();
 
@@ -69,6 +72,13 @@ export default function InfoGenerale(){
     }
 
     function handleCreateVisite(){
+
+        let errors = ErrorMessage([selectedImmeuble,startDate,objetVisite,selectedOption]);
+
+        if(errors.some(el => el !== "")){
+            setErrorsForm(errors);
+            return;
+        }
 
         let info = formatObjectInfo();
 
@@ -125,19 +135,19 @@ export default function InfoGenerale(){
                 <Breadcrumb/>
             </div>
             <div className="mt-9">
-                <SelectImmeuble selectedImmeuble={selectedImmeuble} setSelectedImmeuble={setSelectedImmeuble} visiteIdParam={visiteIdParam}/>
+                <SelectImmeuble selectedImmeuble={selectedImmeuble} setSelectedImmeuble={setSelectedImmeuble} visiteIdParam={visiteIdParam} errorsForm={errorsForm}/>
             </div>
             <div className="mt-9">
-                <DatePickerVisite startDate={startDate} setStartDate={setStartDate}/>
+                <DatePickerVisite startDate={startDate} setStartDate={setStartDate} errorsForm={errorsForm}/>
             </div>
             <div className="mt-9">
-                <ObjetVisite setObjetVisite={setObjetVisite} objetVisite={objetVisite}/>
+                <ObjetVisite setObjetVisite={setObjetVisite} objetVisite={objetVisite} errorsForm={errorsForm}/>
             </div>
             <div className="mt-9">
                 <Contractuelle setContractuelle={setContractuelle} contractuelle={contractuelle}/>
             </div>
             <div className="mt-9">
-                <PersonnesVisite setSelectedOption={setSelectedOption} participants={participants} selectedOption={selectedOption}/>
+                <PersonnesVisite setSelectedOption={setSelectedOption} participants={participants} selectedOption={selectedOption} errorsForm={errorsForm}/>
             </div>
             <div className="flex justify-between mx-auto m-9 p-4 mt-10 mb-9">
                 <button className="text-[color:var(--first-button-color)] bg-[color:var(--second-button-color)] rounded-md py-2 px-4 border border-[color:var(--border-button)]" onClick={() => {window.location.href="/"}}>Annuler</button>
@@ -148,7 +158,7 @@ export default function InfoGenerale(){
 }
 
 // Affiche la modale qui permet de sélectionner un immeuble lors du début de la visite 
-const SelectImmeuble = ({selectedImmeuble, setSelectedImmeuble, visiteIdParam}) => {
+const SelectImmeuble = ({selectedImmeuble, setSelectedImmeuble, visiteIdParam, errorsForm}) => {
 
     const dispatch = useDispatch();
     const [listImmeubles, setListImmeubles] = useState([]);
@@ -163,36 +173,39 @@ const SelectImmeuble = ({selectedImmeuble, setSelectedImmeuble, visiteIdParam}) 
     // Modifie le state locale et globale avec l'immeuble sélectionné 
     const handleSelect = (e) => {
         e.preventDefault();
-        setSelectedImmeuble(JSON.parse(e.target[e.target.selectedIndex].getAttribute('immeuble')));
-        dispatch(setImmeuble(JSON.parse(e.target[e.target.selectedIndex].getAttribute('immeuble'))));
+        let immeuble = e.target.value ? JSON.parse(e.target[e.target.selectedIndex].getAttribute('immeuble')):"";
+        setSelectedImmeuble(immeuble);
+        dispatch(setImmeuble(immeuble));
     }
-
 
     return(
       <div className="m-3">
-        <label htmlFor="immeubles" className="block mb-2 text-sm font-medium text-[color:var(--first-text-color)]">Selectionner un immeuble</label>
-        <select disabled={visiteIdParam ? "disabled":""} id="immeubles" value={selectedImmeuble.code_immeuble} onChange={handleSelect} className="w-full border text-sm rounded-lg p-2.5 bg-[color:var(--input-color)] border-[color:var(--input-border-color)] placeholder-gray-400 text-[color:var(--first-text-color)]">
+        <label htmlFor="immeubles" className="block mb-2 text-sm font-medium text-[color:var(--first-text-color)]">Selectionner un immeuble*</label>
+        <select disabled={visiteIdParam ? "disabled":""} id="immeubles" value={selectedImmeuble.code_immeuble} onChange={handleSelect} className={`w-full border text-sm rounded-lg p-2.5 bg-[color:var(--input-color)] border-[color:var(--input-border-color)] placeholder-gray-400 text-[color:var(--first-text-color)] ${ errorsForm[0] ?"border-red-500":""}`} required={true}>
             <option defaultValue></option>
             {listImmeubles.map(immeuble => <option className="text-sm" value={immeuble.code_immeuble} immeuble={JSON.stringify(immeuble)} key={immeuble.code_immeuble}>{immeuble.code_immeuble} - {immeuble.nom}</option>)}
         </select>
+        <p className='italic text-red-500 text-xs mt-2'>{errorsForm[0]}</p>
       </div>
     )
 }
 
-const DatePickerVisite = ({startDate, setStartDate}) => {
+const DatePickerVisite = ({startDate, setStartDate, errorsForm}) => {
     return (
         <div className="mt-9 mr-3 ml-3 mb-3">
             <label htmlFor="datepickervisite" className="block mb-2 text-sm font-medium text-[color:var(--first-text-color)]">Début de la visite *</label>
-            <DatePicker name="datepickervisite" className="border text-sm rounded-lg block w-full p-2.5 bg-[color:var(--input-color)] border-[color:var(--input-border-color)] placeholder-gray-400 text-[color:var(--first-text-color)]" dateFormat="dd/MM/yyyy HH:mm" locale="fr" selected={startDate} onChange={(date) => setStartDate(date)} />
+            <DatePicker name="datepickervisite" className={`border text-sm rounded-lg block w-full p-2.5 bg-[color:var(--input-color)] border-[color:var(--input-border-color)] placeholder-gray-400 text-[color:var(--first-text-color)] ${ errorsForm[1] ?"border-red-500":""}`} dateFormat="dd/MM/yyyy HH:mm" locale="fr" selected={startDate} onChange={(date) => setStartDate(date)} />
+            <p className='italic text-red-500 text-xs mt-2'>{errorsForm[1]}</p>
         </div>
     );
 };
 
-const ObjetVisite = ({setObjetVisite, objetVisite}) => {
+const ObjetVisite = ({setObjetVisite, objetVisite, errorsForm}) => {
     return(
         <div className="m-3">
             <label htmlFor="objetvisite" className="block mb-2 text-sm font-medium text-[color:var(--first-text-color)]">Objet de la visite *</label>
-            <textarea id="objetvisite" rows="4" className="block p-2.5 w-full text-sm rounded-lg bg-[color:var(--input-color)] border border-[color:var(--input-border-color)] placeholder-gray-400 text-[color:var(--first-text-color)]" placeholder="visite contractuelle" onChange={(objt) => setObjetVisite(objt.target.value)} defaultValue={objetVisite}></textarea>
+            <textarea id="objetvisite" rows="3" className={`block p-2.5 w-full text-sm rounded-lg bg-[color:var(--input-color)] border border-[color:var(--input-border-color)] placeholder-gray-400 text-[color:var(--first-text-color)] ${ errorsForm[2] ?"border-red-500":""}`} placeholder="visite contractuelle" onChange={(objt) => setObjetVisite(objt.target.value)} defaultValue={objetVisite} required={true}></textarea>
+            <p className='italic text-red-500 text-xs mt-2'>{errorsForm[2]}</p>
         </div>
     )
 }
@@ -211,7 +224,7 @@ const Contractuelle = ({setContractuelle, contractuelle}) => {
     )
 }
   
-const PersonnesVisite = ({setSelectedOption, participants, selectedOption}) => {
+const PersonnesVisite = ({setSelectedOption, participants, selectedOption, errorsForm}) => {
    
     if(selectedOption.length >= 0){
         return(
@@ -247,7 +260,7 @@ const PersonnesVisite = ({setSelectedOption, participants, selectedOption}) => {
                         valueContainer: () => 'rounded-lg bg-[color:var(--input-color)] border-[color:var(--input-border-color)]',
                         group: () => 'bg-[color:var(--input-color)]',
                         dropdownIndicator: () => 'bg-[color:var(--input-color)]',
-                        container: () => 'bg-[color:var(--input-color)] rounded-lg p-1 border border-[color:var(--input-border-color)] text-sm',
+                        container: () => `bg-[color:var(--input-color)] rounded-lg p-1 border border-[color:var(--input-border-color)] text-sm ${ errorsForm[3] ?"border-red-500":""}`,
                         indicatorsContainer: () => 'bg-[color:var(--input-color)]',
                     }}
                     isMulti
@@ -257,7 +270,9 @@ const PersonnesVisite = ({setSelectedOption, participants, selectedOption}) => {
                     placeholder={"Participants"}
                     formatCreateLabel={userInput => `Ajouter : ${userInput}`}
                 />
+                <p className='italic text-red-500 text-xs mt-2'>{errorsForm[3]}</p>
             </div>
+
         )
     }
 }

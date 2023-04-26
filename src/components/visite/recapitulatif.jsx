@@ -89,7 +89,8 @@ const TableauRecap = ({listElement, idVisite, setLoading, loading, setListELemen
         setLoading(true)
         deleteElement(idVisite, element).then(() => {
             //MAJ de l'état de la liste des éléments en enlevant l'élément supprimé
-            let filterList = listElement.filter(element => element.composant.id !== composantId && element.secteur.id !== secteurId);
+            let filterList = listElement.filter(element => element.composant.id !== composantId && (element.secteur.id !== secteurId || element.secteur.id === secteurId));
+
             setListELement(filterList);
             NotifyToaster("L'élément a bien été supprimé", "success");
         })
