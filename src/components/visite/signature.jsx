@@ -62,9 +62,9 @@ export default function ListeSignature(){
                     <button className={pers.signature ? "w-full text-[color:var(--first-text-color)] bg-gray-400 rounded-md py-2 px-4":"w-full text-[color:var(--second-text-color)] bg-[color:var(--first-main-color)] rounded-md py-2 px-4"} onClick={() => openAlert(pers)} disabled={ pers.signature ? true:false}>{pers.nom}</button>
                 </div>
             )}
-            <div className="flex justify-between mx-auto m-9 p-4 mt-10 mb-9">
-                <button className="text-[color:var(--first-button-color)] bg-[color:var(--second-button-color)] rounded-md py-2 px-4 border border-[color:var(--border-button)]" onClick={() => {window.location.href="/recap"}}><i><ArrowLeft className="w-5 inline mr-1 mb-1"/></i>Récapitulatif</button>
-                <button className="text-[color:var(--second-text-color)] bg-[color:var(--first-button-color)] hover:bg-[color:var(--button-hover-color)] rounded-md py-2 px-4 shadow-2xl" onClick={() => {window.location.href="/cloture"}}>Clôture<i><ArrowRight className="w-5 inline ml-1 mb-1"/></i></button>
+            <div className="flex justify-center mt-10 mr-3 ml-3 space-x-6 mb-9">
+                <button className="w-full text-[color:var(--first-button-color)] bg-[color:var(--second-button-color)] rounded-md py-2 px-4 border border-[color:var(--border-button)]" onClick={() => {window.location.href="/recap"}}><i><ArrowLeft className="w-5 inline mr-1 mb-1"/></i>Récapitulatif</button>
+                <button className="w-full text-[color:var(--second-text-color)] bg-[color:var(--first-button-color)] hover:bg-[color:var(--button-hover-color)] rounded-md py-2 px-4 shadow-2xl" onClick={() => {window.location.href="/cloture"}}>Clôture<i><ArrowRight className="w-5 inline ml-1 mb-1"/></i></button>
             </div>
         </div>
     )
